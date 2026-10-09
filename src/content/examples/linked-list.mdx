@@ -1,0 +1,61 @@
+---
+type: example
+title: لیست پیوندی از صفر
+description: "پیاده‌سازی گره و لیست پیوندی یک‌طرفه با افزودن، جست‌وجو و تمرین حذف؛ شهود ارجاع‌ها در عمل."
+section: data-structures
+difficulty: intermediate
+order: 7
+estimatedMinutes: 15
+problem: "لیست پیوندی بساز که آخرش اضافه کند، عضوی را پیدا کند و طولش O(1) نباشد — بعد توضیح بده چرا."
+tags: [لیست-پیوندی, ارجاع]
+---
+
+<WorkedExample
+  title="لیست پیوندی"
+  problem="سه عدد ۱۰، ۲۰، ۳۰ را اضافه کن، ۲۰ را پیدا کن، و بگو دسترسی به عنصر iام چه هزینه‌ای دارد."
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — گره', content: 'هر گره داده + ارجاع به بعدی؛ آخرین گره به None اشاره می‌کند.' },
+    { title: 'گام ۲ — افزودن به انتها', content: 'از head تا None قدم بزن و گره تازه را وصل کن. (نسخهٔ با tail سریع‌تر است.)' },
+    { title: 'گام ۳ — جست‌وجو', content: 'قدم‌به‌قدم تا پیدا شدن یا رسیدن به None.' },
+    { title: 'گام ۴ — هزینه', content: 'دسترسی ایندکسی O(n) است چون باید قدم زد؛ همین‌جاست که list پایتون (آرایهٔ پویا) می‌برد.' },
+  ]}
+/>
+
+```python
+class Node:
+    def __init__(self, value, nxt=None):
+        self.value = value
+        self.next = nxt
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def append(self, value):
+        if self.head is None:
+            self.head = Node(value)
+            return
+        cur = self.head
+        while cur.next is not None:
+            cur = cur.next
+        cur.next = Node(value)
+
+    def find(self, value):
+        cur = self.head
+        while cur is not None:
+            if cur.value == value:
+                return cur
+            cur = cur.next
+        return None
+
+ll = LinkedList()
+for v in (10, 20, 30):
+    ll.append(v)
+print(ll.find(20).value)  # 20
+print(ll.find(99))        # None
+```
+
+<Callout type="tip" title="چرا این تمرین؟">
+  نه چون در عمل لیست پیوندی می‌سازی (list آماده بهتر است)، بلکه چون ارجاع، None و پیمایش را با دست حس می‌کنی — همان مهارتی که در درخت و گراف لازم می‌شود.
+</Callout>

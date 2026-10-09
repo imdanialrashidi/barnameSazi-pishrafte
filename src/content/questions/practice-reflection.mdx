@@ -1,0 +1,66 @@
+---
+type: question
+title: تمرین بازتاب و مباحث تکمیلی
+description: "چهار پرسش از getattr، بستار، wraps و enum با پاسخ تشریحی."
+section: reflection-advanced
+difficulty: advanced
+order: 6
+estimatedMinutes: 10
+points: 4
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, بازتاب]
+---
+
+<Quiz
+  id="quiz-practice-reflection-1"
+  title="تمرین — بازتاب"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'نام ویژگی را فقط در زمان اجرا می‌دانی (از فایل پیکربندی می‌آید). چه می‌کنی؟',
+      options: [
+        { id: 'a', text: 'getattr(obj, name) با مقدار پیش‌فرض امن' },
+        { id: 'b', text: 'دسترسی مستقیم obj.name' },
+        { id: 'c', text: 'هیچ راهی نیست' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'دسترسی پویا با نامِ رشته‌ای کارِ getattr است؛ دسترسی مستقیم وقتی ممکن است که نام را از قبل بدانی.'
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      text: 'بستار می‌تواند متغیر تابعِ بیرونی را بین فراخوانی‌ها زنده نگه دارد.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'true',
+      explanation: 'تابعِ داخلی به محیطِ تعریفش چسبیده است؛ با nonlocal حتی می‌تواند آن را بنویسد.'
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      text: 'چرا در تزئین‌کننده functools.wraps می‌گذاریم؟',
+      options: [
+        { id: 'a', text: 'برای سرعت بیشتر' },
+        { id: 'b', text: 'تا نام و مستند تابع اصلی حفظ شود و ابزارها گیج نشوند' },
+        { id: 'c', text: 'اجباریِ نحوی است' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'بدون wraps همهٔ تابع‌های تزئین‌شده wrapper دیده می‌شوند و لاگ/تست/مستندساز می‌شکند.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'به‌جای رشته‌های پراکندهٔ وضعیت سفارش چه باید گذاشت؟',
+      options: [
+        { id: 'a', text: 'رشته‌های بیشتر' },
+        { id: 'b', text: 'enum: انتخابِ نام‌دارِ محدود و قابل‌بررسی' },
+        { id: 'c', text: 'عددهای جادویی' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'enum غلط تایپی را به خطا تبدیل می‌کند و انتخاب‌ها را یکی و مستند می‌کند.'
+    },
+  ]}
+/>

@@ -1,0 +1,61 @@
+---
+type: example
+title: حساب بانکی با قرارداد تمیز
+description: "ساخت کلاس BankAccount قدم‌به‌قدم: سازنده، واریز و برداشت امن و ویژگی فقط‌خواندنی."
+section: oop-basics
+difficulty: beginner
+order: 6
+estimatedMinutes: 12
+problem: "کلاس حساب بانکی بساز که موجودی منفی نشود، ورودی نامعتبر را رد کند و موجودی مستقیم قابل دست‌کاری نباشد."
+tags: [کلاس, کپسوله‌سازی]
+---
+
+<WorkedExample
+  title="حساب بانکی"
+  problem="حسابی با موجودی اولیهٔ ۱۰۰ بساز، ۵۰ واریز کن، ۲۰۰ برداشت کن (باید رد شود) و موجودی نهایی را نشان بده."
+  difficulty="beginner"
+  steps={[
+    { title: 'گام ۱ — حالت', content: 'مالک و موجودی. موجودی داخلی است: _balance.' },
+    { title: 'گام ۲ — رفتار', content: 'deposit و withdraw با اعتبارسنجی ورودی و کنترل موجودی؛ خطا با ValueError.' },
+    { title: 'گام ۳ — قرارداد خواندن', content: 'ویژگی balance فقط برای خواندن؛ بیرون نمی‌تواند مستقیم بنویسد.' },
+    { title: 'گام ۴ — سناریوی تست', content: 'برداشت ۲۰۰ از موجودی ۱۵۰ باید ValueError بدهد و موجودی همان ۱۵۰ بماند.' },
+  ]}
+/>
+
+```python
+class BankAccount:
+    def __init__(self, owner, balance=0.0):
+        if balance < 0:
+            raise ValueError("موجودی اولیه نمی‌تواند منفی باشد.")
+        self.owner = owner
+        self._balance = balance
+
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError("مبلغ واریز باید مثبت باشد.")
+        self._balance += amount
+
+    def withdraw(self, amount):
+        if amount <= 0:
+            raise ValueError("مبلغ برداشت باید مثبت باشد.")
+        if amount > self._balance:
+            raise ValueError("موجودی کافی نیست.")
+        self._balance -= amount
+
+    @property
+    def balance(self):
+        return self._balance
+
+
+acc = BankAccount("علی", 100)
+acc.deposit(50)
+try:
+    acc.withdraw(200)
+except ValueError as e:
+    print("رد شد:", e)
+print(acc.balance)  # 150
+```
+
+<Callout type="tip" title="چرا موجودی منفی نشد؟">
+  چون تنها راهِ تغییر، دو متدِ نگهبان‌دار است. این همان کپسوله‌سازیِ عملی است: قانون «موجودی نامنفی» در یک جا تضمین می‌شود، نه در صد جای کد.
+</Callout>

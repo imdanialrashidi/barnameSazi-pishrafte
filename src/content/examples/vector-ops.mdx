@@ -1,0 +1,46 @@
+---
+type: example
+title: بردار با رفتار طبیعی
+description: "کلاس Vector با جمع عملگری، برابری مقداری و نمایش استاندارد؛ تمرین dunder در عمل."
+section: class-design
+difficulty: intermediate
+order: 6
+estimatedMinutes: 12
+problem: "بردار دوبعدی بساز که با + جمع شود، با == مقایسهٔ مقداری شود و چاپش خوانا باشد."
+tags: [dunder, عملگر]
+---
+
+<WorkedExample
+  title="بردار دوبعدی"
+  problem="دو بردار (1, 2) و (3, 4) را جمع کن، با (4, 6) مقایسه کن و هر دو را چاپ کن."
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — اسکلت', content: '__init__ با x و y؛ بدون هیچ dunder، چاپش زشت و == هویتی است.' },
+    { title: 'گام ۲ — نمایش', content: '__repr__ شبیه سازنده تا اشکال‌زدایی ساده شود.' },
+    { title: 'گام ۳ — رفتار', content: '__add__ شیء تازه برمی‌گرداند (ورودی‌ها دست نمی‌خورند) و __eq__ تاپل‌ها را مقایسه می‌کند.' },
+    { title: 'گام ۴ — راستی‌آزمایی', content: 'جمع (1,2)+(3,4) باید با (4,6) برابر باشد و len برابر ۲.' },
+  ]}
+/>
+
+```python
+class Vector:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+    def __eq__(self, other):
+        return (self.x, self.y) == (other.x, other.y)
+    def __len__(self):
+        return 2
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+
+a, b = Vector(1, 2), Vector(3, 4)
+print(a + b)            # Vector(4, 6)
+print((a + b) == Vector(4, 6))  # True
+```
+
+<Misconception
+  wrong="چون __eq__ تعریف کردیم، بردارها در set هم درست کار می‌کنند."
+  correct="تعریف __eq__ هش را None می‌کند و بردار غیرقابل‌هش می‌شود. اگر عضویت در set لازم است، __hash__ سازگار هم تعریف کن — یا همان‌طور غیرقابل‌هش نگهش دار چون جهش‌پذیر است."
+/>

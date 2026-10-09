@@ -1,0 +1,33 @@
+---
+type: concept
+title: انتخاب کالکشن درست
+short: عضویت مکرر set، نگاشت dict، دنباله list و کلیدِ ثابت tuple؛ deque برای دو سر.
+description: "راهنمای تصمیم کالکشن با هزینهٔ عملیات، deque و دام لیستِ مرتب‌نشده برای جست‌وجو."
+section: data-structures
+difficulty: intermediate
+order: 3
+estimatedMinutes: 8
+tags: [کالکشن, dict, set]
+prerequisites: [iterators-generators]
+---
+
+| نیاز | انتخاب | چرا |
+|---|---|---|
+| عضویت مکرر (`in`) | `set` | میانگین O(1) |
+| کلید → مقدار | `dict` | درهم‌سازی؛ `get` با پیش‌فرض |
+| دنباله با ترتیب | `list` | ایندکس و برش |
+| صف دو سر (FIFO) | `collections.deque` | افزودن/حذف O(1) از هر دو سر |
+| رکوردِ ثابت | `tuple` / دیتاکلاس | تغییرناپذیری = امنیت |
+
+```python
+from collections import deque
+q = deque(["a", "b"])
+q.appendleft("z")  # در list همین کار O(n) بود
+```
+
+دام امتحانی: `in` روی لیستِ بزرگ خطی است و برنامه را خفه می‌کند؛ همان داده در `set` پرواز می‌کند. و `dict` از ۳.۷ به بعد ترتیب درج را نگه می‌دارد — ولی «ترتیب» با «مرتب‌بودن» فرق دارد.
+
+<Misconception
+  wrong="list همه‌کاره است و برای همه‌چیز کافی است."
+  correct="list برای دنباله عالی و برای عضویت مکرر فاجعه است. انتخاب ساختار، اولین تصمیمِ عملکردیِ هر برنامه است."
+/>

@@ -1,0 +1,35 @@
+---
+type: concept
+title: اعلان نوع و جنریک‌ها
+short: نوع‌ها قراردادِ قابل‌بررسی‌اند؛ با TypeVar و Generic یک پیاده‌سازی برای همهٔ نوع‌ها.
+description: "typing، TypeVar، Generic و Protocol: طراحی نوع‌محور بدون ادعای اجبار اجرایی."
+section: modules-typing
+difficulty: advanced
+order: 3
+estimatedMinutes: 9
+tags: [typing, جنریک, پروتکل]
+prerequisites: [imports-namespaces]
+---
+
+```python
+from typing import TypeVar, Generic
+
+T = TypeVar("T")
+
+class Stack(Generic[T]):
+    def __init__(self) -> None:
+        self._items: list[T] = []
+    def push(self, item: T) -> None:
+        self._items.append(item)
+    def pop(self) -> T:
+        if not self._items:
+            raise IndexError("پشته خالی است.")
+        return self._items.pop()
+```
+
+سه حقیقتِ مهم: (۱) اعلان نوع در اجرا اجبار نمی‌شود — `Stack[str]` جلوی `push(123)` را نمی‌گیرد؛ (۲) ارزشش در خوانایی و بررسی ایستا با mypy است؛ (۳) برای رفتارِ واقعاً متفاوت بین نوع‌ها (نه فقط برچسب نوع) از `functools.singledispatch` استفاده کن، نه از تقلیدِ overload جاوا — پایتون overload امضایی ندارد و امضای دوم، اولی را **جایگزین** می‌کند.
+
+<Misconception
+  wrong="چون پایتون overload ندارد، باید چند متد هم‌نام با امضای متفاوت نوشت."
+  correct="تعریف دوم، اولی را پاک می‌کند. راه پایتونیک: آرگومان پیش‌فرض، آرگومان کلیدی‌اجباری (*) و در نیاز واقعی، singledispatch است."
+/>

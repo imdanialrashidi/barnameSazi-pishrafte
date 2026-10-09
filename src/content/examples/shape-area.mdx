@@ -1,0 +1,53 @@
+---
+type: example
+title: شکل‌ها و مساحت چندریخت
+description: "سلسله‌مراتب Shape با ABC: دایره و مستطیل، متد انتزاعی area و تابعی که روی هر شکلی کار می‌کند."
+section: inheritance
+difficulty: intermediate
+order: 7
+estimatedMinutes: 12
+problem: "با ABC یک خانوادهٔ شکل بساز که ساخت شکلِ بدون مساحت ناممکن باشد و جمع مساحت‌ها روی هر ترکیبی کار کند."
+tags: [وراثت, ABC, چندریختی]
+---
+
+<WorkedExample
+  title="خانوادهٔ شکل‌ها"
+  problem="دایره‌ای به شعاع ۲ و مستطیلی ۳×۴ بساز و جمع مساحتشان را با یک تابع عمومی حساب کن."
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — قرارداد پایه', content: 'کلاس Shape از ABC با متد انتزاعی area: هیچ‌کس نمی‌تواند shape ناقص بسازد.' },
+    { title: 'گام ۲ — فرزندان', content: 'Circle و Rectangle هر کدام area خودشان را پیاده می‌کنند.' },
+    { title: 'گام ۳ — تابع چندریخت', content: 'total_area فقط area صدا می‌زند؛ نوعِ شکل برایش مهم نیست.' },
+    { title: 'گام ۴ — اثبات اجبار', content: 'ساخت مستقیم Shape یا فرزندِ بدون area باید TypeError بدهد.' },
+  ]}
+/>
+
+```python
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        ...
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+class Rectangle(Shape):
+    def __init__(self, w, h):
+        self.w, self.h = w, h
+    def area(self):
+        return self.w * self.h
+
+def total_area(shapes):
+    return sum(s.area() for s in shapes)
+
+print(f"{total_area([Circle(2), Rectangle(3, 4)]):.2f}")  # 24.57
+```
+
+<Callout type="tip" title="توسعهٔ بدون تغییر">
+  شکل تازه (مثلث) فقط یک کلاس تازه است؛ `total_area` دست نمی‌خورد. این همان «باز برای توسعه، بسته برای تغییر» است.
+</Callout>

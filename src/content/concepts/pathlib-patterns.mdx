@@ -1,0 +1,29 @@
+---
+type: concept
+title: مسیرها با pathlib
+short: مسیر شیء است نه رشته؛ join امن، پیمایش و الگوی خط‌به‌خط برای فایل بزرگ.
+description: "Path، عملگر /، glob، پیمایش خط‌به‌خط و دام خواندن یک‌جای فایل غول‌پیکر."
+section: files-io
+difficulty: beginner
+order: 2
+estimatedMinutes: 6
+tags: [pathlib, فایل]
+prerequisites: [context-managers]
+---
+
+```python
+from pathlib import Path
+
+base = Path("data")
+for csv_file in base.glob("*.csv"):  # همهٔ CSVهای پوشه
+    print(csv_file.name, csv_file.stat().st_size)
+
+out = base / "report" / "summary.txt"  # join امن و چندسکویی
+out.parent.mkdir(parents=True, exist_ok=True)
+```
+
+سه قانون: (۱) هیچ‌وقت مسیر را با `+` جمع نکن — عملگر `/` مال همین کار است؛ (۲) فایل بزرگ را خط‌به‌خط بپیما، نه `read()` یک‌جا؛ (۳) انکدینگ را همیشه صریح بنویس (`encoding="utf-8"`) چون پیش‌فرضِ سیستم در همه‌جا یکی نیست.
+
+<Callout type="tip" title="متن در برابر باینری">
+  حالت متنی (`"r"`) رشته می‌دهد و انکدینگ می‌خواهد؛ حالت باینری (`"rb"`) بایت. عکس و فشرده را متنی باز نکن — داده خراب می‌شود بی‌آن‌که خطایی ببینی.
+</Callout>

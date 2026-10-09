@@ -1,0 +1,55 @@
+---
+type: example
+title: پشتهٔ جنریک با کنترل خطا
+description: "Stack جنریک با TypeVar: یک پیاده‌سازی برای همهٔ نوع‌ها، با خطای دامنه‌ای برای پشتهٔ خالی."
+section: modules-typing
+difficulty: intermediate
+order: 4
+estimatedMinutes: 12
+problem: "پشته‌ای بساز که هم برای رشته و هم برای عدد کار کند و pop از پشتهٔ خالی را با استثنای معنادار رد کند."
+tags: [جنریک, پشته]
+---
+
+<WorkedExample
+  title="پشتهٔ جنریک"
+  problem="یک Stack رشته‌ای بساز، دو عضو بگذار، یکی بردار؛ بعد pop از پشتهٔ خالی را امتحان کن."
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — پارامتر نوع', content: 'T = TypeVar و ارث‌بری از Generic[T]: یک کد برای همهٔ نوع‌ها.' },
+    { title: 'گام ۲ — رفتار', content: 'push و pop و peek؛ همه با اعلان نوع تا قرارداد روشن باشد.' },
+    { title: 'گام ۳ — مرز خطا', content: 'pop/peek روی خالی IndexError معنادار می‌دهد، نه خطای ایندکسِ گنگِ لیست.' },
+    { title: 'گام ۴ — یادآوری صداقت', content: 'برچسب [str] در زمان اجرا چیزی را اجبار نمی‌کند؛ سند و ابزار ایستاست.' },
+  ]}
+/>
+
+```python
+from typing import TypeVar, Generic
+
+T = TypeVar("T")
+
+class Stack(Generic[T]):
+    def __init__(self) -> None:
+        self._items: list[T] = []
+
+    def push(self, item: T) -> None:
+        self._items.append(item)
+
+    def pop(self) -> T:
+        if not self._items:
+            raise IndexError("پشته خالی است.")
+        return self._items.pop()
+
+    def peek(self) -> T:
+        if not self._items:
+            raise IndexError("پشته خالی است.")
+        return self._items[-1]
+
+s: Stack[str] = Stack()
+s.push("اول")
+s.push("دوم")
+print(s.pop())  # دوم
+```
+
+<Callout type="tip" title="کِی جنریک؟">
+  وقتی منطق برای همهٔ نوع‌ها یکی است (نگهدارنده‌ها، کش‌ها، صف‌ها). وقتی رفتار واقعاً بین نوع‌ها فرق می‌کند، جنریکِ دروغین نزن — singledispatch یا تابع جدا.
+</Callout>

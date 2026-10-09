@@ -1,0 +1,40 @@
+---
+type: concept
+title: تزئین‌کننده‌ها و بستارها
+short: بستار محیطش را یادش می‌ماند و تزئین‌کننده با همان ایده رفتار را لایه‌لایه اضافه می‌کند.
+description: "nonlocal، کارخانهٔ تابع، دکوراتور با آرگومان و قانون wraps."
+section: reflection-advanced
+difficulty: advanced
+order: 3
+estimatedMinutes: 9
+tags: [decorator, بستار]
+prerequisites: [functions-responsibility]
+---
+
+```python
+import functools
+
+def retry(times):
+    """دکوراتورِ کارخانه‌دار: تابع را تا times بار دوباره امتحان می‌کند."""
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(times):
+                try:
+                    return func(*args, **kwargs)
+                except ConnectionError:
+                    if attempt == times - 1:
+                        raise
+        return wrapper
+    return decorator
+
+@retry(times=3)
+def fetch(url):
+    ...
+```
+
+سه لایه را جدا ببین: `retry(times)` کارخانه است، `decorator` تزئین‌کننده، `wrapper` جایگزینِ تابع. `nonlocal` اجازه می‌دهد بستار متغیرِ تابعِ بیرونی را **بنویسد** (خواندنش بدون `nonlocal` هم ممکن است). و `functools.wraps` نام و مستند را حفظ می‌کند — بدون آن، ابزارها تابعِ تو را `wrapper` می‌بینند.
+
+<Callout type="tip" title="کِی دکوراتور؟">
+  رفتارِ عرضی و تکراری (لاگ، زمان‌سنجی، تلاشِ مجدد، کش، کنترل دسترسی) — چیزی که در ده تابع تکرار می‌شود ولی جزوِ منطقِ هیچ‌کدام نیست.
+</Callout>

@@ -1,0 +1,33 @@
+---
+type: concept
+title: متد کلاس و متد ایستا
+short: classmethod به کلاس دسترسی دارد و سازندهٔ جایگزین می‌سازد؛ staticmethod تابعِ مرتب‌چیده در فضای کلاس است.
+description: "تفاوت classmethod و staticmethod، سازندهٔ جایگزین و حفظ چندریختی در ارث‌بری."
+section: class-design
+difficulty: intermediate
+order: 2
+estimatedMinutes: 7
+tags: [classmethod, staticmethod]
+prerequisites: [self-init]
+---
+
+```python
+class Date:
+    def __init__(self, y, m, d):
+        self.y, self.m, self.d = y, m, d
+
+    @classmethod
+    def from_string(cls, text):
+        y, m, d = map(int, text.split("-"))
+        return cls(y, m, d)  # cls یعنی «همین کلاسی که صدا زده شد»
+
+    @staticmethod
+    def is_leap(year):
+        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+```
+
+چرا `from_string` را classmethod کردیم؟ چون اگر زیرکلاسی آن را صدا بزند، `cls` همان زیرکلاس است و شیء درست ساخته می‌شود — چندریختیِ سطح کلاس. با staticmethod این خاصیت را از دست می‌دادی. staticmethod فقط برای «تابعِ بی‌طرفی که منطقاً مال این کلاس است» (مثل `is_leap`) به کار می‌رود.
+
+<Callout type="tip" title="قاعدهٔ انتخاب">
+  به کلاس یا نمونه نیاز داری؟ متد معمولی. فقط به کلاس نیاز داری (سازندهٔ جایگزین، کارخانه)؟ classmethod. به هیچ‌کدام؟ staticmethod — یا حتی تابعِ ماژول‌سطح.
+</Callout>

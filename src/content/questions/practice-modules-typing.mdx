@@ -1,0 +1,66 @@
+---
+type: question
+title: تمرین ماژول و برنامه‌نویسی جنریک
+description: "چهار پرسش از واردات، جنریک، Protocol و overload با پاسخ تشریحی."
+section: modules-typing
+difficulty: intermediate
+order: 5
+estimatedMinutes: 10
+points: 4
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, ماژول]
+---
+
+<Quiz
+  id="quiz-practice-modules-typing-1"
+  title="تمرین — ماژول و نوع"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'دو بار تعریف یک متد هم‌نام با امضای متفاوت در یک کلاس پایتون چه می‌شود؟',
+      options: [
+        { id: 'a', text: 'هر دو می‌مانند و overload می‌شود' },
+        { id: 'b', text: 'تعریف دوم، اولی را جایگزین می‌کند' },
+        { id: 'c', text: 'خطای نحوی' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'پایتون overload امضایی ندارد؛ نامِ دوباره یعنی انتسابِ دوباره. راه درست: پیش‌فرض، kwargs یا singledispatch.'
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      text: 'اعلان Stack[str] جلوی push عدد را در زمان اجرا می‌گیرد.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'نوع‌ها در زمان اجرا اجبار نمی‌شوند؛ بررسی با mypy و ابزار ایستاست.'
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      text: 'واردات چرخه‌ای (A از B و B از A) را چطور حل می‌کنیم؟',
+      options: [
+        { id: 'a', text: 'هر دو را به import ستاره‌ای تبدیل می‌کنیم' },
+        { id: 'b', text: 'منطق مشترک را به ماژول سوم می‌بریم و وابستگی را یک‌طرفه می‌کنیم' },
+        { id: 'c', text: 'فایل‌ها را در هم ادغام می‌کنیم' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'چرخه نشانهٔ مرزِ اشتباه است؛ استخراج ماژول مشترک، وابستگی را درخت می‌کند.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'تفاوت Protocol و ABC در یک جمله؟',
+      options: [
+        { id: 'a', text: 'Protocol قرارداد ساختاری بدون وراثت است؛ ABC وراثت می‌خواهد' },
+        { id: 'b', text: 'ABC سریع‌تر است' },
+        { id: 'c', text: 'Protocol فقط برای عددها کار می‌کند' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'با Protocol هر شیئی با شکل مناسب قبول است؛ با ABC باید صراحتاً ارث ببری.'
+    },
+  ]}
+/>

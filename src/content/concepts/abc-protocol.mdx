@@ -1,0 +1,36 @@
+---
+type: concept
+title: کلاس انتزاعی و پروتکل
+short: ABC وراثت اجباری می‌سازد و Protocol قرارداد ساختاری بدون وراثت؛ جایگزین اینترفیس جاوا.
+description: "abc.ABC و abstractmethod در برابر typing.Protocol: چه‌وقت کدام و تفاوت با اینترفیس جاوا."
+section: inheritance
+difficulty: intermediate
+order: 4
+estimatedMinutes: 8
+tags: [ABC, پروتکل, اینترفیس]
+prerequisites: [polymorphism-dispatch]
+---
+
+جاوا «اینترفیس» جدا دارد؛ پایتون دو ابزار معادلِ تمیزتر دارد:
+
+```python
+from abc import ABC, abstractmethod
+from typing import Protocol
+
+class Shape(ABC):  # اجبار وراثتی
+    @abstractmethod
+    def area(self): ...
+
+class Drawable(Protocol):  # قرارداد ساختاری، بدون وراثت
+    def draw(self) -> None: ...
+
+def render(item: Drawable) -> None:
+    item.draw()  # هر شیئی با متد draw قبول است
+```
+
+قاعدهٔ انتخاب: چارچوبی که دیگران از آن ارث می‌برند و رفتارِ مشترکِ واقعی هم داری → `ABC`. قراردادی که فقط «شکل» می‌خواهد و نمی‌خواهی سلسله‌مراتب تحمیل کنی → `Protocol`. هر دو از «اینترفیسِ جاواییِ ترجمه‌شده» پایتونیک‌ترند.
+
+<Misconception
+  wrong="هر جا جاوا اینترفیس داشت، در پایتون باید ABC گذاشت."
+  correct="خیلی وقت‌ها Protocol (یا حتی همان duck typing مستندشده) دقیقاً همان نیاز است با کوپلینگ کمتر. ABC را برای وقتی نگه دار که واقعاً وراثت و رفتارِ مشترک می‌خواهی."
+/>

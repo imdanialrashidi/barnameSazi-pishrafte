@@ -1,0 +1,107 @@
+---
+type: lesson
+title: رابط گرافیکی و برنامه‌نویسی رویدادمحور
+description: "مدل ذهنی GUI: حلقهٔ رویداد، ویجت‌ها، callbackها و جدایی منطق برنامه از نما با یک مثال واقعی."
+section: gui-events
+difficulty: intermediate
+order: 1
+estimatedMinutes: 25
+objective: بتوانی مدل رویدادمحور را توضیح دهی و منطق برنامه را از کد رابط جدا نگه داری.
+tags: [GUI, رویداد, tkinter, callback]
+prerequisites: [refactoring-patterns]
+concepts: [event-loop]
+---
+
+در برنامهٔ خطی، تو جریان را کنترل می‌کنی؛ در برنامهٔ گرافیکی، **کاربر** کنترل می‌کند. برنامه‌ات می‌خوابد، رویداد می‌آید (کلیک، کلید، تایمر)، تابعی صدا زده می‌شود و دوباره می‌خوابد. اسم این خواب‌وبیداری **حلقهٔ رویداد** (event loop) است.
+
+## حلقهٔ رویداد به زبان ساده
+
+```python
+# شبیه‌سازی ذهنی حلقهٔ رویداد (بدون هیچ کتابخانه‌ای)
+events = ["click:save", "key:a", "click:quit"]
+handlers = {
+    "click:save": lambda: print("ذخیره شد."),
+    "key:a": lambda: print("حرف a تایپ شد."),
+}
+
+for event in events:  # این همان کاری است که حلقهٔ رویداد برایت می‌کند
+    if event == "click:quit":
+        break
+    handlers.get(event, lambda: print("رویداد ناشناخته:", event))()
+```
+
+نکتهٔ طلایی: callback باید **سریع** باشد. اگر callback ده ثانیه حساب کتاب کند، کل رابط قفل می‌شود چون حلقهٔ رویداد منتظر برگشتن اوست. کار سنگین → ریسه جدا یا حالت «مشغولم».
+
+## قانون مقدس: جدایی منطق از نما
+
+منطق برنامه (مثلاً جمع سبد) باید تابعی خالص و تست‌پذیر باشد که هیچ‌چیز از دکمه و پنجره نمی‌داند. کد GUI فقط آن را صدا می‌زند و نتیجه را نشان می‌دهد.
+
+```python
+# logic.py — خالص، بدون هیچ وابستگی به GUI، کاملاً تست‌پذیر
+def add_item(cart, name, price):
+    cart.append({"name": name, "price": price})
+    return cart
+
+def cart_total(cart):
+    return sum(item["price"] for item in cart)
+```
+
+```python
+# gui_app.py — فقط نما (اجرا در محیط گرافیکی با tkinter)
+import tkinter as tk
+from logic import add_item, cart_total
+
+cart = []
+root = tk.Tk()
+root.title("سبد خرید")
+label = tk.Label(root, text="جمع: ۰")
+label.pack()
+
+def on_add():
+    add_item(cart, "کتاب", 12000)
+    label.config(text=f"جمع: {cart_total(cart)}")
+
+tk.Button(root, text="افزودن کتاب", command=on_add).pack()
+root.mainloop()  # شروع حلقهٔ رویداد — این خط تا بسته‌شدن پنجره برنمی‌گردد
+```
+
+<Callout type="tip" title="چرا این جدایی مهم است؟">
+  منطق خالص را با unittest در یک ثانیه تست می‌کنی؛ منطقِ قاطی‌شده با دکمه را فقط با دست و چشم. هر خطی که از logic به GUI نشت کند، یک تست را از تو می‌گیرد.
+</Callout>
+
+<Misconception
+  wrong="برای برنامهٔ گرافیکی باید کل منطق را داخل callback دکمه‌ها نوشت."
+  correct="callback فقط مترجم است: ورودی ویجت را می‌گیرد، تابع منطق را صدا می‌زند، نتیجه را نمایش می‌دهد. منطق همان کدی است که در کنسول هم کار می‌کند."
+/>
+
+<Prerequisite ids={["functions-responsibility", "unit-testing"]} />
+
+<Quiz
+  id="quiz-gui-event-driven-1"
+  title="سنجش فهم — رویدادمحوری"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'اگر یک callback ده ثانیه طول بکشد، چه اتفاقی می‌افتد؟',
+      options: [
+        { id: 'a', text: 'کل رابط قفل می‌شود چون حلقهٔ رویداد منتظر است' },
+        { id: 'b', text: 'هیچ اتفاقی؛ رابط در پس‌زمینه ادامه می‌دهد' },
+        { id: 'c', text: 'برنامه سریع‌تر می‌شود' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'حلقهٔ رویداد تک‌نخی است؛ callback سنگین باید به ریسهٔ جدا برود یا مرحله‌به‌مرحله شود.'
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      text: 'تابع منطق برنامه (مثل جمع سبد) باید بدون هیچ وابستگی به ویجت‌ها نوشته و تست شود.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'true',
+      explanation: 'جدایی منطق از نما یعنی منطق خالص و تست‌پذیر؛ GUI فقط نمایش و ورودی است.'
+    },
+  ]}
+/>

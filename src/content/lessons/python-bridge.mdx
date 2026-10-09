@@ -1,0 +1,148 @@
+---
+type: lesson
+title: پل ورود به دوره
+description: "مرور فشردهٔ پیش‌نیازهای پایتون: توابع، جهش‌پذیری، ارجاع‌ها و ساختار پروژه. نقطهٔ شروع دوره."
+section: prerequisites
+difficulty: beginner
+order: 1
+estimatedMinutes: 20
+objective: بتوانی مسئله را به تابع‌های کوچک بشکنی و رفتار ارجاع و جهش‌پذیری را در کد پیش‌بینی کنی.
+tags: [پیش‌نیاز, تابع, ارجاع, ماژول]
+concepts: [functions-responsibility, mutability-identity, modules-structure]
+---
+
+این دوره فرض می‌کند که با پایتون پایه آشنا هستی: متغیر، حلقه، شرط، تابع و کمی کار با لیست و دیکشنری. این درس یک پل است، نه یک دورهٔ مقدماتی کامل. سه ایده‌ای را که در تمام دوره به آن‌ها برمی‌گردیم، همین‌جا محکم می‌کنیم.
+
+## ۱. مسئله را بشکن، بعد بنویس
+
+تفکر از بالا به پایین (Top-down) یعنی اول مسئله را به قدم‌های بزرگ توصیف کنی، بعد هر قدم را به یک تابع تبدیل کنی. یک تابع خوب فقط یک کار انجام می‌دهد و نامش همان کار را می‌گوید.
+
+```python
+def read_scores(path):
+    """نمره‌ها را از فایل می‌خواند و برمی‌گرداند."""
+    with open(path, encoding="utf-8") as f:
+        return [float(line.strip()) for line in f if line.strip()]
+
+def average(scores):
+    return sum(scores) / len(scores)
+
+def report(path):
+    scores = read_scores(path)
+    print(f"میانگین {len(scores)} نمره: {average(scores):.1f}")
+```
+
+<Callout type="tip" title="قاعدهٔ سرانگشتی">
+  اگر برای توضیح کاری که یک تابع می‌کند مجبور شدی از «و» استفاده کنی («می‌خواند و میانگین می‌گیرد و چاپ می‌کند»)، احتمالاً آن تابع دو مسئولیت دارد و باید بشکند.
+</Callout>
+
+## ۲. جهش‌پذیر در برابر جهش‌ناپذیر
+
+در پایتون بعضی شیءها بعد از ساخته‌شدن عوض می‌شوند (جهش‌پذیر مثل `list` و `dict`) و بعضی نه (جهش‌ناپذیر مثل `int`، `str` و `tuple`). این تفاوت، منشأ نیمی از باگ‌های عجیب تازه‌کارهاست.
+
+```python
+a = [1, 2, 3]
+b = a            # b همان شیء a است، نه یک کپی
+b.append(4)
+print(a)         # [1, 2, 3, 4] — a هم عوض شد!
+
+x = (1, 2, 3)
+y = x            # تاپل جهش‌ناپذیر است؛ «تغییر» یعنی شیء تازه
+```
+
+<Definition term="ارجاع" id="reference-def">
+  متغیر در پایتون جعبه‌ای که مقدار را نگه می‌دارد نیست؛ برچسبی است که به یک شیء در حافظه اشاره می‌کند. انتساب، ارجاع تازه می‌سازد نه کپی.
+</Definition>
+
+<Misconception
+  wrong="با b = a یک کپی مستقل از لیست ساخته می‌شود."
+  correct="با b = a هر دو نام به یک شیء اشاره می‌کنند. برای کپی واقعی از list(a)، a.copy()‎ یا copy.deepcopy برای ساختارهای تودرتو استفاده کن."
+/>
+
+## ۳. پروژهٔ کوچک، ساختار تمیز
+
+حتی یک تمرین سه‌فایلی باید ساختار داشته باشد: هر فایل یک مسئولیت، و نقطهٔ ورود مشخص با نگهبان `__main__`.
+
+```python
+# shop/cart.py
+def total(items):
+    """جمع قیمت اقلام سبد را برمی‌گرداند."""
+    return sum(item["price"] * item["qty"] for item in items)
+```
+
+```python
+# shop/main.py
+from cart import total
+
+def main():
+    items = [{"price": 12000, "qty": 2}, {"price": 8000, "qty": 1}]
+    print(total(items))
+
+if __name__ == "__main__":
+    main()
+```
+
+<Callout type="warning" title="چرا نگهبان __main__؟">
+  بدون این نگهبان، هر بار که فایل را `import` کنی کد سطح ماژول اجرا می‌شود. نگهبان یعنی: «این بخش فقط وقتی اجرا شود که فایل مستقیم اجرا شده، نه وقتی وارد شده است».
+</Callout>
+
+## از کجا بفهمی آماده‌ای؟
+
+<Prerequisite ids={["functions-responsibility", "mutability-identity", "modules-structure"]} />
+
+اگر بتوانی بدون اجرای کد بگویی خروجی تکهٔ زیر چیست، آمادهٔ ورود به دنیای شیءگرا هستی:
+
+```python
+def add_tag(tags, tag="new"):
+    tags.append(tag)
+    return tags
+
+a = []
+print(add_tag(a))
+print(add_tag(a))
+```
+
+<Quiz
+  id="quiz-python-bridge-1"
+  title="سنجش فهم — پل ورود"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'خروجی دومین print در مثال add_tag چیست؟',
+      options: [
+        { id: 'a', text: "['new']" },
+        { id: 'b', text: "['new', 'new']" },
+        { id: 'c', text: 'خطا می‌دهد چون لیست خالی است' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'هر دو فراخوانی روی همان شیء a کار می‌کنند چون لیست جهش‌پذیر است و تابع همان شیء را برمی‌گرداند؛ بار دوم دو عضو دارد.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'کدام گزینه نشانهٔ این است که یک تابع بیش از یک مسئولیت دارد؟',
+      options: [
+        { id: 'a', text: 'نامش کوتاه است' },
+        { id: 'b', text: 'برای توصیف کارش به «و» نیاز داری' },
+        { id: 'c', text: 'کمتر از پنج خط است' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'نیاز به «و» در توصیف یعنی تابع دو کار متفاوت می‌کند؛ معیار طول خط یا کوتاهی نام نیست.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'در پایتون، انتساب b = a برای لیست‌ها یک کپی مستقل می‌سازد.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'انتساب فقط ارجاع تازه می‌سازد؛ هر دو نام به یک شیء اشاره می‌کنند.'
+    },
+  ]}
+/>
+
+<Confused prerequisites={["functions-responsibility", "mutability-identity"]} retry="بخش ۲ را با یک مثال دستی روی کاغذ تکرار کن: برای هر نام یک پیکان به یک جعبه بکش.">
+  اگر رفتار ارجاع‌ها گیج‌کننده است، طبیعی است: مدل ذهنی «متغیر = جعبه» را با «متغیر = برچسب روی شیء» جایگزین کن و مثال‌ها را با همین مدل دوباره بخوان.
+</Confused>

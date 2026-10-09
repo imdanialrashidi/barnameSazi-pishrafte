@@ -1,0 +1,30 @@
+---
+type: formula
+title: تعریف O بزرگ
+name: "نماد O بزرگ (Big-O)"
+description: "تعریف دقیق O بزرگ: کران بالای رشد، حذف ثابت‌ها و خواندن درست نماد با مثال."
+section: data-structures
+difficulty: intermediate
+order: 4
+estimatedMinutes: 6
+tags: [پیچیدگی, Big-O]
+latex: "T(n) = O(f(n))"
+conditions:
+  - رفتار حدی برای ورودی‌های بزرگ است، نه ورودی کوچک.
+  - ثابت‌ها و جملات کم‌مرتبه حذف می‌شوند.
+  - بدترین حالت را توصیف می‌کند مگر خلافش گفته شود.
+---
+
+این فرمول می‌گوید زمان (یا حافظهٔ) الگوریتم با رشد ورودی، حداکثر با چه سرعتی رشد می‌کند.
+
+<Formula
+  id="big-o-definition"
+  latex={"T(n) = O(f(n))"}
+  caption="خوانش: رشد T حداکثر از مرتبهٔ f است"
+/>
+
+یعنی از یک n₀ به بعد، <Formula inline latex={"T(n) \\leq c \\cdot f(n)"} /> برای یک ثابت c. سه پیامدِ عملی: (۱) ثابت‌ها مهم نیستند — <Formula inline latex={"O(2n)"} /> همان <Formula inline latex={"O(n)"} /> است؛ (۲) جملهٔ غالب می‌ماند — <Formula inline latex={"O(n^2 + n)"} /> همان <Formula inline latex={"O(n^2)"} /> است؛ (۳) نماد دربارهٔ «مقیاس» حرف می‌زند نه ثانیه: الگوریتمِ <Formula inline latex={"O(n^2)"} /> با دوبرابرشدن ورودی تقریباً چهار برابر می‌شود.
+
+<Callout type="tip" title="چطور بخوانیم؟">
+  «O(n) است» یعنی «زمانش حداکثر خطی رشد می‌کند». اگر کسی گفت «دقیقاً n قدم»، دارد O را با شمارشِ دقیق قاطی می‌کند.
+</Callout>

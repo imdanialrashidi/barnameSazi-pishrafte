@@ -1,0 +1,37 @@
+---
+type: concept
+title: ساده‌سازی شرط‌ها و فراخوانی‌ها
+short: نگهبان به‌جای هرم if، استخراج شرطِ نام‌دار و پارامترِ روشن به‌جای پرچمِ مرموز.
+description: "نگهبان‌ها، شرطِ نام‌دار، حذف پرچم کنترلی و ساده‌سازی امضای تابع."
+section: refactoring-patterns
+difficulty: intermediate
+order: 3
+estimatedMinutes: 8
+tags: [شرط, بازآرایی]
+prerequisites: [code-smells]
+---
+
+```python
+# قبل: هرم
+def admit(student):
+    if student is not None:
+        if student.gpa >= 17:
+            if not student.suspended:
+                return True
+    return False
+
+# بعد: نگهبان + شرط نام‌دار
+def is_eligible(s):
+    return s is not None and s.gpa >= 17 and not s.suspended
+
+def admit(student):
+    if not is_eligible(student):
+        return False
+    return True
+```
+
+سه حرکتِ ۹۰٪ مواقع کافی است: (۱) شرطِ منفیِ خروجِ زودهنگام (نگهبان)، (۲) استخراج عبارتِ شرطی به تابعِ نام‌دار (`is_eligible`)، (۳) حذف پارامترِ پرچمی (`send(email, verbose=True)` → دو تابع یا سطحِ لاگ). امضای تابع، رابطِ توست؛ هر پارامترِ اضافه، مالیاتِ همیشگیِ همهٔ فراخوان‌هاست.
+
+<Callout type="tip" title="نامِ شرط">
+  شرطِ بی‌نام را نمی‌شود تست کرد، مستند کرد یا دوباره استفاده کرد. اسم‌دارکردنش ارزان‌ترین بازآراییِ ممکن است.
+</Callout>

@@ -4,6 +4,7 @@ import mdx from '@astrojs/mdx';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import { remarkBaseLinks } from './src/lib/remark-base-links.mjs';
+import { remarkTableScroll } from './src/lib/remark-table-scroll.mjs';
 
 /**
  * Deployment configuration.
@@ -29,14 +30,14 @@ export default defineConfig({
     gfm: true,
     // Authors always write clean `/lessons/...` links in content; the deployment
     // base is applied here so project-site builds never 404 on them.
-    remarkPlugins: [[remarkBaseLinks, { base: basePath }]],
+    remarkPlugins: [[remarkBaseLinks, { base: basePath }], remarkTableScroll],
   },
   integrations: [
     tailwind({ applyBaseStyles: false }),
     react(),
     // MDX goes through the MDX integration's own pipeline, so the base-link
     // plugin must be registered there as well as on `markdown`.
-    mdx({ remarkPlugins: [[remarkBaseLinks, { base: basePath }]] }),
+    mdx({ remarkPlugins: [[remarkBaseLinks, { base: basePath }], remarkTableScroll] }),
     sitemap({
       // Suggest only indexable routes: the search page carries
       // `noindex, follow` and must never appear in the sitemap.

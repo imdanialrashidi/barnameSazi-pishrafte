@@ -1,0 +1,49 @@
+---
+type: example
+title: خط لولهٔ نمره‌ها از CSV تا JSON
+description: "خواندن CSV، اعتبارسنجی سطرها، گزارش خطا با شمارهٔ سطر و ذخیرهٔ JSON تمیز."
+section: files-io
+difficulty: intermediate
+order: 4
+estimatedMinutes: 12
+problem: "فایل نمره‌های CSV را بخوان، سطرهای خراب را با شماره گزارش کن و نتیجهٔ تمیز را JSON ذخیره کن."
+tags: [CSV, JSON, فایل]
+---
+
+<WorkedExample
+  title="خط لولهٔ نمره"
+  problem="ورودی سه سطری با یک سطر خراب؛ خروجی JSON فقط با سطرهای سالم + گزارش سطر خراب."
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — خواندن', content: 'DictReader با newline و انکدینگ صریح؛ هر سطر یک دیکشنری.' },
+    { title: 'گام ۲ — اعتبارسنجی', content: 'نمره باید عدد ۰ تا ۲۰ باشد؛ بقیه با شمارهٔ سطر گزارش و رد می‌شوند.' },
+    { title: 'گام ۳ — نوشتن', content: 'json با ensure_ascii=False تا فارسی تمیز بماند و indent برای خوانایی.' },
+    { title: 'گام ۴ — قانون', content: 'سطر خراب کل کار را متوقف نمی‌کند؛ گزارش می‌شود و ادامه می‌دهیم.' },
+  ]}
+/>
+
+```python
+import csv, json
+from pathlib import Path
+
+def pipeline(src, dst):
+    src, dst = Path(src), Path(dst)
+    good, bad = [], []
+    with src.open(encoding="utf-8", newline="") as f:
+        for lineno, row in enumerate(csv.DictReader(f), start=2):
+            try:
+                score = float(row["score"])
+                if not 0 <= score <= 20:
+                    raise ValueError("خارج از بازه")
+                good.append({"name": row["name"].strip(), "score": score})
+            except (ValueError, KeyError, TypeError) as e:
+                bad.append(f"سطر {lineno}: {e}")
+    dst.write_text(json.dumps(good, ensure_ascii=False, indent=2), encoding="utf-8")
+    return bad
+
+print(pipeline("scores.csv", "clean.json"))
+```
+
+<Callout type="tip" title="شمارهٔ سطر از ۲">
+  `start=2` چون سطر ۱ سربرگ است. گزارشِ «سطر ۴ خراب است» وقتی ارزش دارد که کاربر بتواند همان سطر را در فایل پیدا کند.
+</Callout>

@@ -1,0 +1,45 @@
+---
+type: concept
+title: کپسوله‌سازی
+short: قرارداد عمومی پایدار و جزئیات داخلی پنهان؛ در پایتون با آندرلاین و property.
+description: "کپسوله‌سازی بدون عضو خصوصی اجباری: قرارداد آندرلاین، name mangling و property."
+section: oop-basics
+difficulty: beginner
+order: 4
+estimatedMinutes: 7
+tags: [کپسوله‌سازی, حریم]
+prerequisites: [class-vs-object]
+---
+
+<Definition term="کپسوله‌سازی" id="encapsulation-def">
+  پنهان‌کردن جزئیات داخلی پشت یک قرارداد عمومیِ پایدار تا بیرون به پیاده‌سازی وابسته نشود.
+</Definition>
+
+پایتون عضو خصوصیِ اجباری مثل جاوا ندارد و این تصمیمِ آگاهانهٔ زبان است، نه کمبود:
+
+- `_name`: قرارداد «داخلی» — بخوان ولی دست نزن.
+- `__name`: فعال‌سازی name mangling (تغییرنام به `_Class__name`) برای جلوگیری از تداخل در وراثت، نه امنیت.
+- `property`: خواندنِ کنترل‌شده بدون شکستن قرارداد.
+
+```python
+class Temperature:
+    def __init__(self, celsius):
+        self._celsius = celsius
+
+    @property
+    def celsius(self):
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value):
+        if value < -273.15:
+            raise ValueError("زیر صفر مطلق ناممکن است.")
+        self._celsius = value
+```
+
+بیرون همیشه `t.celsius` می‌بیند؛ امروز ویژگی ساده، فردا اعتبارسنجی — و هیچ کدی بیرون عوض نمی‌شود. این تمامِ جادوست.
+
+<Misconception
+  wrong="چون به _balance می‌شود دسترسی داشت، پس کپسوله‌سازی در پایتون بی‌معناست."
+  correct="کپسوله‌سازی قرارداد اجتماعی و طراحی است نه قفل حافظه. در همهٔ زبان‌ها برنامه‌نویسِ مصمم می‌تواند به جزئیات برسد؛ هنر این است که کدِ سالم نیازی به این کار نداشته باشد."
+/>

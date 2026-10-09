@@ -1,0 +1,39 @@
+---
+type: concept
+title: وراثت و بازنویسی
+short: فرزند رفتار والد را به ارث می‌برد و با بازنویسی، نسخهٔ خاص خودش را می‌دهد.
+description: "وراثت تکی، بازنویسی متد، super و همکاری سازنده‌ها با مثال حیوانات."
+section: inheritance
+difficulty: intermediate
+order: 2
+estimatedMinutes: 8
+tags: [وراثت, بازنویسی, super]
+prerequisites: [class-vs-object, self-init]
+---
+
+<Definition term="بازنویسی" id="override-def">
+  تعریف دوبارهٔ یک متد والد در فرزند با همان نام و امضا، برای رفتارِ خاص‌تر.
+</Definition>
+
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+    def speak(self):
+        raise NotImplementedError
+
+class Dog(Animal):
+    def speak(self):  # بازنویسی
+        return "واق واق"
+
+d = Dog("رکس")
+print(isinstance(d, Animal))  # True — فرزند «همان» والد هم هست
+print(d.speak())              # واق واق — نسخهٔ فرزند اجرا شد
+```
+
+وقتی متد را بازنویسی می‌کنی سه انتخاب داری: جایگزینی کامل، توسعه با `super()`، یا (به‌ندرت) فراخوانی مشروط والد. قانون: امضای متد فرزند باید با والد سازگار بماند تا کدی که با والد کار می‌کرد نشکند (اصل جانشینی لیسکوف).
+
+<Misconception
+  wrong="هر رفتار مشترکی را باید با وراثت مدل کرد."
+  correct="وراثت فقط برای رابطهٔ «هست» است. رفتارِ مشترکِ چیزهای نامرتبط را با تابع مشترک یا ترکیب مدل کن، نه با والدِ مصنوعی."
+/>

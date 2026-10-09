@@ -1,0 +1,43 @@
+---
+type: concept
+title: حلقهٔ رویداد
+short: برنامه می‌خوابد، رویداد می‌آید، callback سریع جواب می‌دهد و دوباره می‌خوابد.
+description: "مدل رویدادمحور: صف رویداد، callback، چرا کار سنگین رابط را قفل می‌کند و راه‌حلش."
+section: gui-events
+difficulty: intermediate
+order: 2
+estimatedMinutes: 7
+tags: [رویداد, GUI]
+prerequisites: [functions-responsibility]
+---
+
+<Definition term="حلقهٔ رویداد" id="event-loop-def">
+  چرخه‌ای که رویدادها را از صف برمی‌دارد و callback متناظر را صدا می‌زند؛ قلبِ هر رابط گرافیکی و خیلی از سرورها.
+</Definition>
+
+```python
+# مدل ذهنیِ اجرایی: همین سه خط، کلِ رازِ GUI است
+def wait_for_event():
+    return EVENTS.pop(0) if EVENTS else "click:quit"
+
+def dispatch(event):
+    handlers.get(event, lambda: print("رویداد ناشناخته:", event))()
+
+EVENTS = ["click:save", "key:a", "click:quit"]
+handlers = {
+    "click:save": lambda: print("ذخیره شد."),
+    "key:a": lambda: print("حرف a تایپ شد."),
+}
+
+while True:
+    event = wait_for_event()  # خواب تا آمدنِ کلیک/کلید/تایمر
+    if event == "click:quit":
+        break
+    dispatch(event)           # صدازدنِ callback متناظر
+```
+
+دو قانونِ حیاتی: (۱) callback باید سریع برگردد — کارِ سنگین را به ریسهٔ جدا بسپار یا مرحله‌ای کن؛ (۲) به‌روزرسانیِ نما فقط از نخِ اصلیِ رابط، وگرنه رفتارِ платформе‌به‌پلتفرمِ عجیب می‌بینی. همین مدل را بعداً در `asyncio` هم می‌بینی: حلقه یکی است، callbackها با `async/await` قشنگ‌تر نوشته می‌شوند.
+
+<Callout type="tip" title="اشکال‌زدایی رویداد">
+  وقتی دکمه «کار نمی‌کند»، اول بپرس: callback وصل است؟ (print اولِ callback)، بعد: callback زود برمی‌گردد؟ ۹۰٪ باگ‌های GUI جوابِ همین دو سؤال است.
+</Callout>

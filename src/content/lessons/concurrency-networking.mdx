@@ -1,0 +1,150 @@
+---
+type: lesson
+title: هم‌روندی، موازی‌سازی و شبکه
+description: "ریسه در برابر فرایند، حالت مشترک و قفل، صف امن، اجراکننده‌ها و سوکت TCP با یک پروتکل کوچک واقعی."
+section: concurrency-network
+difficulty: advanced
+order: 1
+estimatedMinutes: 35
+objective: بتوانی مسابقهٔ داده‌ای را تشخیص دهی، با قفل و صف امن هم‌روندی کنی و کلاینت/سرور سوکتی بسازی.
+tags: [ریسه, قفل, صف, سوکت]
+prerequisites: [gui-event-driven]
+concepts: [threads-locks, executors-queues, sockets-tcp]
+---
+
+دو برنامه که «هم‌زمان» پیش می‌روند لزوماً «موازی» نیستند. **هم‌روندی** (concurrency) یعنی مدیریت چند کارِ درهم‌رفته؛ **موازی‌سازی** (parallelism) یعنی اجرای واقعیِ هم‌زمان روی چند هسته. ریسه‌ها در پایتون برای کارِ منتظرِ I/O عالی‌اند، ولی به‌خاطر GIL برای محاسبات سنگینِ CPU موازیِ واقعی نمی‌سازند.
+
+## ریسه در برابر فرایند
+
+فرایند حافظهٔ جدا دارد و سنگین است؛ ریسه سبک است ولی حافظه را با ریسه‌های هم‌فرایندش **شریک** می‌شود. همین شراکت، هم قدرت است هم دردسر: دردسرش اسم دارد — **مسابقهٔ داده‌ای** (race condition).
+
+```python
+import threading
+
+counter = 0
+lock = threading.Lock()
+
+def worker(n):
+    global counter
+    for _ in range(n):
+        with lock:  # ناحیهٔ بحرانی: فقط یک ریسه در هر لحظه
+            counter += 1
+
+threads = [threading.Thread(target=worker, args=(10_000,)) for _ in range(4)]
+for t in threads: t.start()
+for t in threads: t.join()
+print(counter)  # همیشه 40000 — بدون قفل، کمتر و تصادفی بود
+```
+
+<Definition term="ناحیهٔ بحرانی" id="critical-section-def">
+  بخشی از کد که به حالت مشترک دسترسی دارد و نباید دو ریسه هم‌زمان واردش شوند. قفل (Lock) ورود را یکی‌یکی می‌کند.
+</Definition>
+
+<Misconception
+  wrong="چون GIL هست، در پایتون هیچ‌وقت مسابقهٔ داده‌ای رخ نمی‌دهد."
+  correct="GIL فقط تضمین می‌کند بایت‌کدها درهم اجرا نشوند، نه این‌که عملیات چندقدمی (خواندن-تغییر-نوشتن) اتمی باشد. counter += 1 بدون قفل در CPython هم گم می‌کند."
+/>
+
+## به‌جای قفل دستی: صف امن‌ریسه‌ای
+
+بهترین همگام‌سازی، کمترین حالت مشترک است. الگوی تولیدکننده/مصرف‌کننده با `queue.Queue` (که خودش امن‌ریسه‌ای است) جای قفل دستی:
+
+```python
+import queue, threading
+
+jobs = queue.Queue()
+for i in range(10):
+    jobs.put(f"job-{i}")
+
+def consumer():
+    while True:
+        try:
+            job = jobs.get_nowait()
+        except queue.Empty:
+            return
+        print("انجام شد:", job)
+        jobs.task_done()
+
+workers = [threading.Thread(target=consumer) for _ in range(3)]
+for w in workers: w.start()
+for w in workers: w.join()
+```
+
+برای کارهای «اجرا و جواب بگیر» هم `concurrent.futures.ThreadPoolExecutor` تمیزترین ابزار است.
+
+## شبکه: سوکت TCP
+
+سوکت، نقطهٔ پایانیِ یک اتصال است. در TCP: سرور گوش می‌دهد و قبول می‌کند، کلاینت وصل می‌شود، هر دو بایت می‌فرستند و می‌گیرند، آخرش اتصال بسته می‌شود.
+
+```python
+# server.py
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind(("127.0.0.1", 65432))
+    s.listen()
+    print("سرور گوش می‌دهد...")
+    conn, addr = s.accept()
+    with conn:
+        print("وصل شد:", addr)
+        data = conn.recv(1024)
+        conn.sendall(b"echo:" + data)
+```
+
+```python
+# client.py
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect(("127.0.0.1", 65432))
+    s.sendall("سلام سرور".encode("utf-8"))
+    print(s.recv(1024).decode("utf-8"))
+```
+
+<Callout type="tip" title="قانون بایت">
+  سوکت بایت می‌فهمد، نه رشته. موقع فرستادن `encode` و موقع گرفتن `decode` کن و برای مرز پیام (کِی یک پیام تمام می‌شود) از قبل قرارداد بگذار: طول‌اول، جداکننده، یا بستن اتصال.
+</Callout>
+
+<Prerequisite ids={["functions-responsibility", "mutability-identity", "context-managers"]} />
+
+<Quiz
+  id="quiz-concurrency-networking-1"
+  title="سنجش فهم — هم‌روندی و شبکه"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'بدون قفل، حلقهٔ counter += 1 در چهار ریسه چه نتیجه‌ای می‌دهد؟',
+      options: [
+        { id: 'a', text: 'همیشه دقیق و درست' },
+        { id: 'b', text: 'ممکن است کمتر از انتظار شود چون خواندن-تغییر-نوشتن اتمی نیست' },
+        { id: 'c', text: 'همیشه خطای نحوی می‌دهد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'افزایش سه قدم دارد؛ ریسه‌ها وسط قدم‌های هم می‌پرند و افزایش‌ها گم می‌شوند.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'برای محاسبات سنگین CPU-bound در پایتون چه باید کرد؟',
+      options: [
+        { id: 'a', text: 'ریسهٔ بیشتر، چون GIL موازی واقعی می‌سازد' },
+        { id: 'b', text: 'ریسه برای CPU-bound موازی واقعی نمی‌دهد؛ فرایند (multiprocessing) یا راه‌حل دیگر' },
+        { id: 'c', text: 'هیچ راهی نیست' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'GIL ریسه‌های CPU-bound را سریال می‌کند؛ ریسه برای I/O-bound عالی است و برای CPU-bound باید فرایند یا ابزار دیگر آورد.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'سوکت مستقیم رشتهٔ پایتون می‌فرستد و نیازی به encode/decode نیست.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'سوکت بایت منتقل می‌کند؛ تبدیل رشته به بایت و برعکس با قرارداد انکدینگ مشخص بر عهدهٔ توست.'
+    },
+  ]}
+/>

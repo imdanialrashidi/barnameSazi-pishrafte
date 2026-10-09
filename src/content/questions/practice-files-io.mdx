@@ -1,0 +1,66 @@
+---
+type: question
+title: تمرین فایل و سریال‌سازی
+description: "چهار پرسش از with، pathlib، JSON امن و خطر pickle با پاسخ تشریحی."
+section: files-io
+difficulty: intermediate
+order: 5
+estimatedMinutes: 10
+points: 4
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, فایل]
+---
+
+<Quiz
+  id="quiz-practice-files-io-1"
+  title="تمرین — فایل و سریال‌سازی"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'فایل pickle از کاربرِ ناشناس رسیده. چه می‌کنی؟',
+      options: [
+        { id: 'a', text: 'loads می‌کنم' },
+        { id: 'b', text: 'باز نمی‌کنم؛ بارگذاری pickle معادل اجرای کد است' },
+        { id: 'c', text: 'تغییرنام می‌دهم بعد باز می‌کنم' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'unpickling دادهٔ نامطمئن می‌تواند کد دلخواه اجرا کند؛ فقط JSON/CSV با اعتبارسنجی.'
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      text: 'بازکردن فایل با with تضمین می‌کند حتی با استثنا هم بسته شود.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'true',
+      explanation: 'زمینه‌بان در خروج (عادی یا با استثنا) منبع را آزاد می‌کند.'
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      text: 'چرا انکدینگ را صریح می‌نویسیم (encoding="utf-8")؟',
+      options: [
+        { id: 'a', text: 'چون پیش‌فرض سیستم در همه‌جا یکی نیست و فایل فارسی می‌شکند' },
+        { id: 'b', text: 'چون سرعت بیشتر می‌شود' },
+        { id: 'c', text: 'فقط برای فایل باینری لازم است' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'پیش‌فرضِ انکدینگ وابسته به سیستم است؛ صریح‌نوشتن یعنی رفتار یکسان همه‌جا.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'فایل متنی ۵ گیگابایتی را چطور می‌خوانی؟',
+      options: [
+        { id: 'a', text: 'یک‌جا با read و پردازش در حافظه' },
+        { id: 'b', text: 'خط‌به‌خط با حلقه روی فایل' },
+        { id: 'c', text: 'اصلاً خواندنی نیست' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'پیمایش خط‌به‌خط حافظهٔ ثابت می‌خواهد؛ read یک‌جا RAM را پر می‌کند.'
+    },
+  ]}
+/>

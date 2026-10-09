@@ -1,0 +1,29 @@
+---
+type: concept
+title: ترکیب در برابر وراثت
+short: «دارد» را با ترکیب و «هست» را با وراثت مدل کن؛ ترکیب معمولاً کم‌کوپل‌تر است.
+description: "چه‌وقت ترکیب بهتر از وراثت است: قاعدهٔ هست/دارد، تزریق وابستگی و انعطاف تعویض رفتار."
+section: inheritance
+difficulty: intermediate
+order: 5
+estimatedMinutes: 8
+tags: [ترکیب, وراثت, طراحی]
+prerequisites: [inheritance-overriding]
+---
+
+```python
+class Engine:
+    def start(self): return "موتور روشن شد."
+
+class Car:  # ماشین «یک موتور دارد» — ترکیب
+    def __init__(self, engine=None):
+        self.engine = engine or Engine()
+    def start(self):
+        return self.engine.start() + " ماشین آماده است."
+```
+
+ترکیب سه برتری دارد: (۱) رفتار را در زمان اجرا می‌شود عوض کرد (موتور برقی بده)، (۲) سلسله‌مراتب عمیق و شکننده نمی‌سازد، (۳) تست با موتورِ بدلی ساده است (تزریق وابستگی از همین‌جا می‌آید). وراثت را برای «هستِ» واقعی و پایدار نگه دار (سگ یک حیوان است و همیشه خواهد بود).
+
+<Callout type="tip" title="تستِ تصمیم">
+  اگر جمله‌ات «X یک Y است» بود و همیشه درست می‌ماند → وراثت. اگر «X از Y استفاده می‌کند / یک Y دارد» → ترکیب.
+</Callout>

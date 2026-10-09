@@ -1,0 +1,134 @@
+---
+type: lesson
+title: طراحی پیشرفتهٔ کلاس‌ها
+description: "متد کلاس و ایستا، ویژگی‌ها، متدهای جادویی، دیتاکلاس‌ها و چرخهٔ عمر شیء در مدل شیء پایتون."
+section: class-design
+difficulty: intermediate
+order: 1
+estimatedMinutes: 30
+objective: بتوانی با classmethod و property و dunder API تمیز بسازی و چرخهٔ عمر شیء را توضیح دهی.
+tags: [classmethod, property, dunder, dataclass]
+prerequisites: [inheritance-polymorphism]
+concepts: [classmethod-staticmethod, properties, dunder-methods, object-lifecycle-gc]
+---
+
+حالا که وراثت را بلدی، وقتش است کلاس‌هایی بسازی که «پایتونیک» حس شوند: سازندهٔ جایگزین، ویژگیِ محاسبه‌شده، عملگرهای طبیعی و چرخهٔ عمر شفاف.
+
+## سازندهٔ جایگزین با classmethod
+
+```python
+class Person:
+    def __init__(self, name, birth_year):
+        self.name = name
+        self.birth_year = birth_year
+
+    @classmethod
+    def from_string(cls, text):
+        """سازندهٔ جایگزین: 'سارا-1380' → Person."""
+        name, year = text.split("-")
+        return cls(name, int(year))
+
+    @staticmethod
+    def is_adult(age):
+        """ابزار خالص بدون نیاز به نمونه یا کلاس."""
+        return age >= 18
+```
+
+`classmethod` به کلاس (`cls`) دسترسی دارد پس ارث‌بری را حفظ می‌کند؛ `staticmethod` به هیچ‌کدام کاری ندارد و فقط یک تابعِ مرتب‌چیده‌شده در فضای کلاس است. جاوا این‌ها را `static` صدا می‌کند اما معنایشان یکی نیست: در پایتون `classmethod` چندریختیِ سطح کلاس هم دارد.
+
+## ویژگی: متد به شکل ویژگی
+
+```python
+class Circle:
+    def __init__(self, radius):
+        self.radius = radius
+
+    @property
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+c = Circle(2)
+print(c.area)  # بدون پرانتز — مثل خواندن ویژگی
+```
+
+<Misconception
+  wrong="property فقط راه شیک نوشتن getter جاواست."
+  correct="property قرارداد را حفظ می‌کند: امروز ویژگی ساده است، فردا محاسبه می‌شود، و کد بیرون عوض نمی‌شود. قدرتش در پایداری رابط است، نه اختصار."
+/>
+
+## متدهای جادویی: رفتار طبیعی
+
+```python
+class Vector:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+
+    def __len__(self):
+        return 2
+
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+
+    def __eq__(self, other):
+        return (self.x, self.y) == (other.x, other.y)
+```
+
+قانون طلایی: `__repr__` برای توسعه‌دهنده (ترجیحاً چیزی شبیه سازنده) و `__str__` برای کاربر نهایی. اگر فقط یکی را می‌نویسی، `__repr__` را بنویس.
+
+## دیتاکلاس: کلاس‌های داده‌ای بدون تکرار
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Student:
+    name: str
+    student_id: int
+    gpa: float = 0.0
+```
+
+یک خط دکوراتور، سازنده و `__repr__` و `__eq__` معقول می‌سازد. وقتی کلاست بیشتر «داده» است تا «رفتار»، دیتاکلاس انتخاب اول است.
+
+## چرخهٔ عمر شیء و زباله‌روبی
+
+شیء با `__init__` به دنیا می‌آید و وقتی هیچ ارجاعی به آن نماند، شمارندهٔ ارجاع CPython آزادش می‌کند (رفتار خاص پیاده‌سازی CPython است، نه تضمین زبان). چرخه‌های ارجاعی (A به B، B به A) را زباله‌روب چرخه‌ای جمع می‌کند.
+
+<Callout type="warning" title="برچسب دقیق">
+  «فوراً آزاد می‌شود» فقط رفتار CPython است. در PyPy زمان آزادسازی فرق می‌کند. پس به `__del__` برای منطق مهم (بستن فایل، آزادکردن قفل) اعتماد نکن؛ از زمینه‌بان (`with`) استفاده کن.
+</Callout>
+
+<Prerequisite ids={["self-init", "encapsulation", "inheritance-overriding"]} />
+
+<Quiz
+  id="quiz-advanced-class-design-1"
+  title="سنجش فهم — طراحی کلاس"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'چرا سازندهٔ جایگزین را classmethod می‌کنیم نه staticmethod؟',
+      options: [
+        { id: 'a', text: 'چون به cls دسترسی دارد و در ارث‌بری کلاس درست را می‌سازد' },
+        { id: 'b', text: 'چون سریع‌تر اجراست' },
+        { id: 'c', text: 'چون staticmethod در پایتون وجود ندارد' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'اگر زیرکلاس from_string را صدا بزند، cls همان زیرکلاس است؛ با static این چندریختی از دست می‌رفت.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'برای منطق حساس موقع نابودی شیء (مثل بستن فایل) چه باید کرد؟',
+      options: [
+        { id: 'a', text: 'اعتماد به __del__' },
+        { id: 'b', text: 'استفاده از زمینه‌بان with' },
+        { id: 'c', text: 'هیچ‌کدام؛ فایل خودش بسته می‌شود' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'زمان صدا زده‌شدن __del__ تضمینی نیست؛ زمینه‌بان آزادسازی قطعی و خوانا می‌دهد.'
+    },
+  ]}
+/>

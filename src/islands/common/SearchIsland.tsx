@@ -192,8 +192,8 @@ export default function SearchIsland({ items, initialQuery = '' }: SearchIslandP
         <div className="mt-4 rounded-lg border border-line bg-surface px-5 py-5">
           <p className="text-xs font-bold tracking-wide text-ink-faint">می‌توانید جست‌وجو کنید</p>
           <ul className="mt-2 grid gap-1.5 text-sm text-ink-muted">
-            <li>نام یک مفهوم، مثل «مشتق»</li>
-            <li>نام یک فرمول، مثل «زنجیره»</li>
+            <li>نام یک مفهوم، مثل «چندریختی»</li>
+            <li>نام یک فرمول، مثل «پیچیدگی»</li>
             <li>عنوان یک درس یا مثال حل‌شده</li>
           </ul>
         </div>

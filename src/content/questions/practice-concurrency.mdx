@@ -1,0 +1,78 @@
+---
+type: question
+title: تمرین هم‌روندی و شبکه
+description: "پنج پرسش از مسابقهٔ داده‌ای، GIL، صف، Executor و سوکت با پاسخ تشریحی."
+section: concurrency-network
+difficulty: advanced
+order: 7
+estimatedMinutes: 12
+points: 5
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, هم‌روندی]
+---
+
+<Quiz
+  id="quiz-practice-concurrency-1"
+  title="تمرین — هم‌روندی و شبکه"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'چرا counter += 1 بدون قفل در چند ریسه گم می‌کند؟',
+      options: [
+        { id: 'a', text: 'چون سه قدمِ خواندن-جمع-نوشتن اتمی نیست و ریسه‌ها وسطش می‌پرند' },
+        { id: 'b', text: 'چون پایتون جمع بلد نیست' },
+        { id: 'c', text: 'چون متغیر سراسری در ریسه دیده نمی‌شود' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'عملیات چندقدمی بدون محافظ، مسابقهٔ داده‌ای است؛ GIL هم نجاتش نمی‌دهد.'
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      text: 'به‌خاطر GIL در پایتون هیچ‌وقت مسابقهٔ داده‌ای رخ نمی‌دهد.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'GIL فقط اجرای بایت‌کد را سریال می‌کند، نه منطق چندقدمی تو را.'
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      text: 'محاسبات سنگین CPU-bound را با چه ابزاری موازیِ واقعی می‌کنی؟',
+      options: [
+        { id: 'a', text: 'ریسهٔ بیشتر' },
+        { id: 'b', text: 'فرایند (multiprocessing) چون GIL ریسه‌ها را سریال می‌کند' },
+        { id: 'c', text: 'حلقهٔ معمولی' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'ریسه برای I/O-bound عالی و برای CPU-bound بی‌اثر است؛ موازیِ واقعیِ CPU یعنی فرایند جدا.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'سوکت چه چیزی منتقل می‌کند؟',
+      options: [
+        { id: 'a', text: 'شیء پایتون' },
+        { id: 'b', text: 'بایت؛ تبدیل رشته با encode/decode بر عهدهٔ توست' },
+        { id: 'c', text: 'فقط عدد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'سوکت لولهٔ بایت است؛ قالب و انکدینگ قراردادِ دو سر است.'
+    },
+    {
+      id: 'q5',
+      type: 'multiple-choice',
+      text: 'در TCP، گیرنده از کجا می‌فهمد یک «پیام» کجا تمام می‌شود؟',
+      options: [
+        { id: 'a', text: 'TCP خودش پیام‌ها را جدا تحویل می‌دهد' },
+        { id: 'b', text: 'از قراردادِ خودمان: طول‌اول، جداکننده یا بستن اتصال' },
+        { id: 'c', text: 'نیازی به دانستن نیست' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'TCP جریان است نه پیام؛ مرز پیام را پروتکلِ تو مشخص می‌کند.'
+    },
+  ]}
+/>

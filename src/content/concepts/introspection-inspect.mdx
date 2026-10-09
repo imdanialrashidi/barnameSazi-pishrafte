@@ -1,0 +1,33 @@
+---
+type: concept
+title: درون‌نگری و inspect
+short: با type و dir و getattr در زمان اجرا از شیء بپرس؛ با inspect امضا و سورس را بخوان.
+description: "جعبه‌ابزار بازتاب: type، isinstance، hasattr، getattr، dir و ماژول inspect."
+section: reflection-advanced
+difficulty: intermediate
+order: 2
+estimatedMinutes: 7
+tags: [بازتاب, inspect]
+prerequisites: [self-init]
+---
+
+```python
+import inspect
+
+def register(func):
+    sig = inspect.signature(func)
+    print(func.__name__, list(sig.parameters))
+    return func
+
+@register
+def enroll(name, age=18):
+    ...
+# enroll ['name', 'age'] — دکوراتور موقع تعریف، امضا را خواند
+```
+
+نقشهٔ ابزار: `type` نوعِ دقیق، `isinstance` عضویت در خانواده (با ارث‌بری)، `hasattr/getattr` دسترسیِ پویا با نامِ رشته‌ای، `dir` فهرستِ نام‌ها، `inspect.signature` امضا، `vars()` دیکشنریِ ویژگی‌های نمونه. قانون احتیاط: پویاییِ زیاد، خوانایی را می‌خورد — بازتاب برای ابزار و چارچوب است، نه برای منطقِ عادیِ برنامه.
+
+<Misconception
+  wrong="کدِ بازتابی چون هوشمندانه است، همیشه بهتر است."
+  correct="کدِ صریحِ ساده تقریباً همیشه برنده است. بازتاب را برای جایی نگه دار که واقعاً نام‌ها را از قبل نمی‌دانی (پلاگین، ابزار، دیباگر)."
+/>

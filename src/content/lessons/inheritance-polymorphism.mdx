@@ -1,0 +1,163 @@
+---
+type: lesson
+title: وراثت و چندریختی
+description: "استفادهٔ دوبارهٔ امن از رفتار: وراثت، بازنویسی، ارسال پویا، super و انتخاب ترکیب در برابر وراثت."
+section: inheritance
+difficulty: intermediate
+order: 1
+estimatedMinutes: 25
+objective: بتوانی سلسله‌مراتب وراثتی تمیز بسازی، رفتار را بازنویسی کنی و بگویی کِی ترکیب بهتر از وراثت است.
+tags: [وراثت, چندریختی, super, ترکیب]
+prerequisites: [objects-and-classes]
+concepts: [inheritance-overriding, polymorphism-dispatch, abc-protocol, composition-vs-inheritance, multiple-inheritance-mro]
+---
+
+وراثت یعنی «این چیز، نسخهٔ خاص‌تری از آن چیز است و بیشتر رفتارش را از همان می‌گیرد». قدرتش استفادهٔ دوباره است؛ خطرش قاطی‌شدن مسئولیت‌ها در یک درخت عمیق و شکننده.
+
+## وراثت پایه
+
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        raise NotImplementedError("هر حیوانی باید صدای خودش را تعریف کند.")
+
+    def introduce(self):
+        return f"من {self.name} هستم."
+
+class Dog(Animal):
+    def speak(self):  # بازنویسی
+        return "واق واق"
+
+class Cat(Animal):
+    def speak(self):
+        return "میو میو"
+```
+
+`Dog` همهٔ رفتار `Animal` را به ارث می‌برد و فقط `speak` را بازنویسی می‌کند. متد مشترک `introduce` بدون تکرار کد در اختیار هر دو است.
+
+## super و همکاری سازنده‌ها
+
+وقتی فرزند سازندهٔ خودش را می‌نویسد، معمولاً باید سازندهٔ والد را هم صدا بزند تا حالت پایه ساخته شود:
+
+```python
+class GuardDog(Dog):
+    def __init__(self, name, zone):
+        super().__init__(name)  # ساخت حالت پایه
+        self.zone = zone
+
+    def speak(self):
+        return super().speak() + "!"  # توسعهٔ رفتار والد، نه جایگزینی کامل
+```
+
+<Callout type="tip" title="قانون super">
+  اگر در فرزند `__init__` نوشتی و والد هم حالت مهمی می‌سازد، `super().__init__()` را فراموش نکن. رایج‌ترین باگ وراثت همین یک خط جاافتاده است.
+</Callout>
+
+## چندریختی و ارسال پویا
+
+چندریختی یعنی «یک رابط، رفتارهای متفاوت»: کدی که با `Animal` حرف می‌زند، برای `Dog` و `Cat` بدون تغییر کار می‌کند چون پایتون در زمان اجرا متد واقعی همان شیء را پیدا می‌کند (ارسال پویا).
+
+```python
+def morning_call(animals):
+    for animal in animals:
+        print(animal.introduce(), "می‌گوید:", animal.speak())
+
+morning_call([Dog("رکس"), Cat("میشی")])
+```
+
+<Misconception
+  wrong="برای چندریختی حتماً باید وراثت داشته باشیم."
+  correct="در پایتون تایپ‌ایمنی اردکی (duck typing) هم چندریختی می‌سازد: هر شیئی که متد speak داشته باشد کار می‌کند، حتی بدون والد مشترک. وراثت فقط یکی از راه‌هاست."
+/>
+
+## انتزاع واقعی: ABC
+
+وقتی می‌خواهی «بودنِ» یک رابط را اجبار کنی (نه فقط مستندش کنی)، از کلاس پایهٔ انتزاعی استفاده کن:
+
+```python
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        ...
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+# Shape()  → TypeError: نمی‌شود از کلاس انتزاعی نمونه ساخت
+```
+
+جاوا «اینترفیس» جدا دارد؛ پایتون ندارد و لازم هم ندارد: `abc.ABC` برای اجبار وراثتی و `typing.Protocol` برای قرارداد ساختاری (بدون وراثت) همان کار را تمیزتر انجام می‌دهند.
+
+## ترکیب در برابر وراثت
+
+<Definition term="ترکیب" id="composition-def">
+  ساختن رفتار از شیءهای دیگر («دارد») به‌جای ارث‌بردن («هست»). انعطاف‌پذیرتر و کم‌کوپل‌تر از وراثت عمیق است.
+</Definition>
+
+قاعدهٔ عملی: فقط وقتی وراثت بزن که رابطهٔ «هست» واقعاً برقرار باشد (سگ یک حیوان است). اگر رابطه «دارد» یا «استفاده می‌کند» است (ماشین یک موتور دارد، نه این‌که یک موتور باشد)، ترکیب کن.
+
+```python
+class Engine:
+    def start(self):
+        return "موتور روشن شد."
+
+class Car:  # ترکیب، نه وراثت از Engine
+    def __init__(self):
+        self.engine = Engine()
+
+    def start(self):
+        return self.engine.start() + " ماشین آماده است."
+```
+
+<Prerequisite ids={["class-vs-object", "self-init", "encapsulation"]} />
+
+<Quiz
+  id="quiz-inheritance-polymorphism-1"
+  title="سنجش فهم — وراثت و چندریختی"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'اگر فرزند __init__ خودش را بنویسد ولی super().__init__ را صدا نزند، چه می‌شود؟',
+      options: [
+        { id: 'a', text: 'حالت پایه ساخته نمی‌شود و ویژگی‌های والد گم می‌شوند' },
+        { id: 'b', text: 'پایتون خودکار والد را صدا می‌زند و مشکلی نیست' },
+        { id: 'c', text: 'کل وراثت لغو می‌شود' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'پایتون سازندهٔ والد را خودکار صدا نمی‌زند؛ مسئولیتش با توست.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'ماشین و موتور: وراثت یا ترکیب؟',
+      options: [
+        { id: 'a', text: 'وراثت، چون ماشین نوعی موتور است' },
+        { id: 'b', text: 'ترکیب، چون ماشین یک موتور دارد نه این‌که یک موتور باشد' },
+        { id: 'c', text: 'فرقی ندارد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'رابطه «دارد» است نه «هست»؛ ترکیب کوپلینگ را کم و تعویض موتور را ساده می‌کند.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'می‌توان مستقیم از یک کلاس ABC که متد انتزاعیِ پیاده‌نشده دارد نمونه ساخت.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'ساخت نمونه از ABC با متد انتزاعیِ پیاده‌نشده TypeError می‌دهد؛ همین اجبار، ارزش ABC است.'
+    },
+  ]}
+/>

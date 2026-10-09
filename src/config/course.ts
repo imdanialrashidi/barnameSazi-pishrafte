@@ -1,87 +1,145 @@
 /**
- * Course configuration for the template.
+ * Course configuration — «برنامه‌سازی پیشرفته با پایتون».
  *
- * When a new course is created from this template, the course author edits this
- * single file to configure title, description, sections, difficulty, tags, and
- * theming. All UI, layout, and interactive components read from this config.
- *
- * DO NOT add university-specific, professor-specific, or institutional branding.
- * The only permanent identity is Danial Rashidi.
+ * Independent self-study resource grounded in the Advanced Programming academic
+ * scope (OOP, design, testing, refactoring, patterns, GUI concepts,
+ * concurrency, networking, reflection), taught idiomatically in Python.
+ * No university/professor/institutional branding (see docs/CONTENT-CONTRACT.md).
  */
 
 import type { CourseConfig } from '../lib/types';
 
 export const courseConfig: CourseConfig = {
   // --- Identity (course-specific) ---
-  title: 'حساب دیفرانسیل، قدم‌به‌قدم',
-  tagline: 'از حد تا قاعدهٔ زنجیره‌ای — با مثال حل‌شده، فرمول دقیق و تمرین',
+  title: 'برنامه‌سازی پیشرفته با پایتون',
+  tagline: 'از تفکر شیءگرا تا طراحی، تست، بازآرایی، هم‌روندی و شبکه — قدم‌به‌قدم با پایتون',
   description:
-    'درس‌نامهٔ آزاد و قدم‌به‌قدم حساب دیفرانسیل: هر مفهوم با مثال حل‌شده، هر فرمول با توضیح دقیق. از حد شروع کنید و تا قاعدهٔ زنجیره‌ای پیش بروید.',
-  shortDescription: 'درس‌نامهٔ قدم‌به‌قدم حساب دیفرانسیل',
+    'درس‌نامهٔ آزاد و قدم‌به‌قدم برنامه‌سازی پیشرفته با پایتون: از تفکر شیءگرا و طراحی کلاس تا تست، بازآرایی، الگوهای طراحی، هم‌روندی و شبکه. هر مفهوم با مثال اجرایی پایتون، هر مسیر با پیش‌نیاز مشخص.',
+  shortDescription: 'درس‌نامهٔ قدم‌به‌قدم برنامه‌سازی پیشرفته با پایتون',
   locale: 'fa',
   direction: 'rtl',
 
   // --- Brand (per-topic logo) ---
-  // When this template powers a site on another subject, change these two
-  // values and the header mark + favicon follow — no component edits needed.
+  // The header mark renders `icon` (a programming code-mark for this
+  // course), falling back to `monogram`; the favicon renders the code
+  // brackets wrapped around `monogram`. `icon` must be an IconName from
+  // `src/components/ui/icon-names.ts`. Change these values and both follow.
   logo: {
-    monogram: 'ح',
-    icon: 'formula',
+    monogram: 'پ',
+    icon: 'code',
   },
 
   // --- Course metadata ---
-  difficulty: 'beginner',
-  estimatedDuration: 'خودآموز',
+  difficulty: 'intermediate',
+  estimatedDuration: 'خودآموز · حدود ۱۲ هفته',
   difficultyLevel: 3, // 1–5 scale
-  tags: ['ریاضی', 'حساب دیفرانسیل', 'حد و مشتق'],
+  tags: ['پایتون', 'برنامه‌سازی شیءگرا', 'طراحی نرم‌افزار', 'تست', 'هم‌روندی', 'شبکه'],
   category: 'آموزشی',
 
   // --- Sections (navigation groups) ---
   sections: [
     {
-      id: 'foundations',
-      title: 'مبانی',
-      description: 'مفاهیم اولیه و پیش‌نیازها',
+      id: 'prerequisites',
+      title: 'پیش‌نیاز و تفکر برنامه‌نویسی',
+      description: 'پل ورود به دوره: تفکر الگوریتمی، توابع، ارجاع‌ها و ساختار پروژه',
       order: 1,
     },
     {
-      id: 'calculus',
-      title: 'حساب دیفرانسیل و انتگرال',
-      description: 'مشتق، انتگرال و کاربردهایشان',
+      id: 'oop-basics',
+      title: 'مبانی برنامه‌سازی شیءگرا',
+      description: 'شیء، کلاس، کپسوله‌سازی و طراحی مسئولیت‌ها',
       order: 2,
     },
     {
-      id: 'physics',
-      title: 'فیزیک',
-      description: 'مکانیک، الکتریسیته و مغناطیس‌گری',
+      id: 'inheritance',
+      title: 'وراثت و چندریختی',
+      description: 'وراثت، بازنویسی، ارسال پویا، ترکیب و MRO',
       order: 3,
     },
     {
-      id: 'practice',
-      title: 'تمرین',
-      description: 'سوالات و مسائل تمرینی',
+      id: 'class-design',
+      title: 'طراحی پیشرفته کلاس‌ها و مدل شیء پایتون',
+      description: 'متدهای کلاس و ایستا، ویژگی‌ها، متدهای جادویی و چرخهٔ عمر شیء',
       order: 4,
+    },
+    {
+      id: 'modules-typing',
+      title: 'ماژول، پکیج و برنامه‌نویسی جنریک',
+      description: 'واردات، فضاهای نام، اعلان نوع و طراحی نوع‌محور',
+      order: 5,
+    },
+    {
+      id: 'errors-testing',
+      title: 'مدیریت خطا، اشکال‌زدایی و آزمون',
+      description: 'استثناها، زمینه‌بان‌ها، روش اشکال‌زدایی و تست واحد',
+      order: 6,
+    },
+    {
+      id: 'data-structures',
+      title: 'ساختمان داده‌ها و الگوریتم‌های پایه',
+      description: 'کالکشن‌های پایتون، تکرارگرها، جست‌وجو، مرتب‌سازی و پیچیدگی',
+      order: 7,
+    },
+    {
+      id: 'files-io',
+      title: 'فایل، ورودی/خروجی و سریال‌سازی',
+      description: 'متن و باینری، pathlib، JSON و CSV و بار امن دادهٔ خارجی',
+      order: 8,
+    },
+    {
+      id: 'refactoring-patterns',
+      title: 'بازآرایی، کد تمیز و الگوهای طراحی',
+      description: 'بوی کد، ساده‌سازی، انسجام و الگوهای کاربردی با جایگزین پایتونیک',
+      order: 9,
+    },
+    {
+      id: 'gui-events',
+      title: 'رابط گرافیکی و برنامه‌نویسی رویدادمحور',
+      description: 'مدل ذهنی GUI، حلقهٔ رویداد و جدایی منطق از نما',
+      order: 10,
+    },
+    {
+      id: 'concurrency-network',
+      title: 'هم‌روندی، موازی‌سازی و شبکه',
+      description: 'ریسه‌ها، همگام‌سازی، اجراکننده‌ها و سوکت‌های TCP',
+      order: 11,
+    },
+    {
+      id: 'reflection-advanced',
+      title: 'بازتاب و مباحث تکمیلی',
+      description: 'درون‌نگری، تزئین‌کننده‌ها، بستارها و enum',
+      order: 12,
+    },
+    {
+      id: 'review-project',
+      title: 'مرور، حل مسئله و پروژه',
+      description: 'تمرین‌های ترکیبی، ردیابی کد و پروژهٔ پایانی',
+      order: 13,
     },
   ],
 
   // --- Course-specific theming ---
-  // `themePreset` selects a shared preset from `src/lib/themes.ts`; inline
-  // `theme.colors` still wins when both are set, so a course can start from a
-  // preset and adjust one role. Never fork `src/styles/theme.css` per course.
-  themePreset: 'calculus',
+  // Uses the shared `programming` preset; never fork `src/styles/theme.css`.
+  themePreset: 'programming',
   theme: {
-    name: 'calculus',
-    // Roles come from the `calculus` preset in src/lib/themes.ts (the
-    // documented paper/teal/ochre palette). Override a single role here only
-    // when the course genuinely needs it — never fork theme.css.
-    colors: {},
-    typography: 'traditional',
-    motif: 'geometric',
+    name: 'programming',
+    // Python-duo palette on the shared preset (wash/label stay preset-owned).
+    // Measured WCAG 2.2 ratios (relative-luminance formula):
+    // light canvas #FAF7F0 — white-on-primary 4.84, primary-as-text 4.52,
+    //   accent-as-text 4.69 (all >= 4.5:1 PASS); dark canvas #14120F —
+    //   primary-as-text 3.87, dark-btn-text-on-primary 3.51, accent 3.72
+    //   (>= 3:1, strictly better than the stock preset in dark; no single
+    //   hex can reach 4.5 for both button directions with fixed on-colors).
+    colors: {
+      primary: '#3776AB',
+      primaryHover: '#285E96',
+      accent: '#B45309',
+    },
+    typography: 'modern',
+    motif: 'technical',
   },
 
   // --- Feature flags ---
-  // Every capability defaults to enabled when omitted. Turn a flag off to
-  // hide its UI (nav item, island, section) without editing components.
   features: {
     search: true,
     commandPalette: true,

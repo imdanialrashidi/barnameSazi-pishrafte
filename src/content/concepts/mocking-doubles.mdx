@@ -1,0 +1,32 @@
+---
+type: concept
+title: موک و دابل‌های تست
+short: وابستگیِ کند یا خارجی را با بدلیِ کنترل‌شده عوض کن؛ ولی فقط در مرزها.
+description: "unittest.mock، چه‌وقت موک بزنیم، دام موک‌زدنِ بیش‌ازحد و تستِ قرارداد."
+section: errors-testing
+difficulty: advanced
+order: 5
+estimatedMinutes: 8
+tags: [موک, تست]
+prerequisites: [unit-testing]
+---
+
+```python
+from unittest.mock import patch
+
+def send_receipt(gateway, phone, text):
+    return gateway.send(phone, text)
+
+def test_receipt_uses_gateway():
+    calls = []
+    fake = lambda phone, text: calls.append((phone, text)) or "ok"
+    assert send_receipt(fake, "0912", "سلام") == "ok"
+    assert calls == [("0912", "سلام")]
+```
+
+موک برای مرزهای کند/خارجی/تصادفی است (شبکه، ساعت، درگاه پرداخت) — نه برای منطقِ خودت. دام بزرگ: موک‌زدنِ آن‌قدر زیاد که تست فقط «پیاده‌سازیِ فعلی» را آینه کند و هر بازآراییِ سالم را قرمز کند. قانون: رفتارِ قابل‌مشاهده را assert کن، نه ترتیبِ فراخوانیِ داخلی را — مگر این‌که خودِ فراخوانی، قرارداد باشد (مثل ارسال پیامک).
+
+<Misconception
+  wrong="کدِ خوب تست‌شده یعنی همه‌چیز موک شده."
+  correct="موک بدهی است: هر موک یک قراردادِ دستی است که با تغییر واقعیت می‌شکند. کمترین موکی که مرز را کنترل کند، بهترین است."
+/>

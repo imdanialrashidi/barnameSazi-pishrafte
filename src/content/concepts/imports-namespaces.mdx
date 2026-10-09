@@ -1,0 +1,27 @@
+---
+type: concept
+title: واردات و فضاهای نام
+short: import نام را به شیء گره می‌زند؛ واردات مطلق و چرخه‌ای را بشناس.
+description: "سبک‌های import، واردات مطلق در برابر نسبی، trap واردات چرخه‌ای و نقش __init__.py."
+section: modules-typing
+difficulty: intermediate
+order: 2
+estimatedMinutes: 7
+tags: [import, فضای-نام]
+prerequisites: [modules-structure]
+---
+
+<Definition term="فضای نام" id="namespace-def">
+  نگاشتِ نام به شیء؛ هر ماژول، کلاس و تابع فضای نام خودش را دارد و `import` پلی بین آن‌هاست.
+</Definition>
+
+```python
+import shop.cart              # shop.cart.total — صریح و امن
+from shop.cart import total   # total — کوتاه ولی خطر تداخل
+```
+
+دو دام بزرگ: (۱) **واردات چرخه‌ای** (A از B وارد می‌کند و B از A) → بازطراحی کن: منطق مشترک را به ماژول سوم ببر؛ (۲) اجرای کدِ سطح ماژول موقع import → کارِ واقعی را داخل تابع و پشت نگهبان `__main__` نگه دار. `__init__.py` مرز پکیج است: رابط عمومی را همان‌جا صادر کن تا کاربران به فایل‌های داخلی خزیده نشوند.
+
+<Callout type="tip" title="ترتیب واردات">
+  استاندارد، شخص‌ثالث، محلی — هر گروه جدا. ابزارهایی مثل ruff این نظم را خودکار نگه می‌دارند.
+</Callout>

@@ -1,0 +1,36 @@
+---
+type: concept
+title: الگوهای طراحی به سبک پایتون
+short: Strategy و Observer و Facade و MVC را بشناس؛ ولی اول جایگزینِ پایتونیک را امتحان کن.
+description: "الگوهای کاربردی با پیاده‌سازی تابعی، Singleton مشکوک و ملاکِ «کِی الگو بیاوریم»."
+section: refactoring-patterns
+difficulty: advanced
+order: 4
+estimatedMinutes: 10
+tags: [الگو, Strategy, Observer]
+prerequisites: [composition-vs-inheritance, polymorphism-dispatch]
+---
+
+الگو اسمِ مشترک برای «راه‌حلِ تکراریِ یک دردِ تکراری» است — نه مدال افتخار. در پایتون خیلی از الگوهای کلاسیکِ جاوا با یک تابع یا دیکشنری حل می‌شوند:
+
+- **Strategy** → دیکشنریِ نام → تابع (درس بازآرایی).
+- **Observer** → لیستِ callback و متد `subscribe`.
+- **Facade** → یک تابعِ ساده روی زیرسیستمِ پیچیده.
+- **MVC** → همان انضباط «منطق جدا از نما» که در GUI دیدی.
+- **Singleton** → تقریباً همیشه نه؛ به‌جایش نمونهٔ ماژول‌سطح یا تزریق وابستگی. حالتِ سراسریِ پنهان، تست را جهنم می‌کند.
+
+```python
+# Facade: یک ورودی ساده روی سه قدمِ پیچیده
+def publish(article):
+    rendered = render_markdown(article.body)
+    indexed = index_for_search(article.id, rendered)
+    notify_subscribers(article.author, article.id)
+    return indexed
+```
+
+ملاک آوردن الگو: دردِ واقعی و تکراری (سومین بار که در یک محور تغییر کردی). قبلش ساده‌ترین کدِ خوانا.
+
+<Misconception
+  wrong="معمارِ خوب در هر پروژه از چند الگو استفاده می‌کند."
+  correct="معمارِ خوب الگوها را می‌شناسد و تا درد نباشد به کارشان نمی‌برد. الگویِ بدونِ درد، پیچیدگیِ بدونِ سود است."
+/>

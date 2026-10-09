@@ -1,0 +1,127 @@
+---
+type: lesson
+title: ماژول، پکیج و برنامه‌نویسی جنریک
+description: "واردات و فضاهای نام، ساختار پکیج، اعلان نوع، TypeVar و Protocol برای طراحی نوع‌محور."
+section: modules-typing
+difficulty: intermediate
+order: 1
+estimatedMinutes: 25
+objective: بتوانی پکیج مرتب بسازی و با typing و Protocol API انعطاف‌پذیر و امن طراحی کنی.
+tags: [ماژول, پکیج, typing, جنریک]
+prerequisites: [advanced-class-design]
+concepts: [imports-namespaces, typing-generics]
+---
+
+برنامهٔ بزرگ بدون مرزِ ماژول، یک فایل هزارخطیِ ترسناک می‌شود. ماژول‌بندی یعنی هر ایده یک خانه داشته باشد و قرارداد بین خانه‌ها روشن باشد.
+
+## واردات و فضاهای نام
+
+```python
+# shop/cart.py
+DISCOUNT = 0.1
+
+def total(items):
+    return sum(i["price"] * i["qty"] for i in items) * (1 - DISCOUNT)
+```
+
+```python
+# main.py — سه سبک واردات
+import shop.cart                    # فضای نام کامل: shop.cart.total
+from shop.cart import total         # مستقیم، ولی خطر تداخل نام
+from shop import cart as cart_mod   # نام مستعار برای رفع تداخل
+```
+
+<Callout type="warning" title="دام واردات ستاره‌ای">
+  `from x import *` فضای نام را آلوده و خوانایی را نابود می‌کند. در کد واقعی ممنوعش کن؛ فقط در کنسول تعاملی قابل تحمل است.
+</Callout>
+
+## ساختار پکیج
+
+```text
+shop/
+├── __init__.py      # مرز پکیج؛ رابط عمومی را همین‌جا صادر کن
+├── cart.py
+├── pricing.py
+└── tests/
+    └── test_cart.py
+```
+
+`__init__.py` امروزه می‌تواند خالی باشد، اما بهترین جاست برای تعریف «رابط عمومی پکیج»: همان چیزهایی که کاربر پکیج باید ببیند، نه همهٔ جزئیات داخلی.
+
+## اعلان نوع: مستندِ قابل بررسی
+
+```python
+def total(items: list[dict]) -> float:
+    ...
+```
+
+اعلان نوع در زمان اجرا اجبار نمی‌شود؛ ارزشش خوانایی و بررسی ایستا با ابزارهایی مثل mypy است. جاهایی نوع بگذار که قرارداد را روشن می‌کند (مرز توابع و API عمومی)، نه هر متغیر داخلی.
+
+## جنریک: یک پیاده‌سازی برای همهٔ نوع‌ها
+
+```python
+from typing import TypeVar, Generic
+
+T = TypeVar("T")
+
+class Stack(Generic[T]):
+    def __init__(self) -> None:
+        self._items: list[T] = []
+
+    def push(self, item: T) -> None:
+        self._items.append(item)
+
+    def pop(self) -> T:
+        return self._items.pop()
+
+names: Stack[str] = Stack()
+```
+
+جاوا جنریک را با پاک‌سازی نوع (erasure) پیاده می‌کند؛ پایتون اصلاً در زمان اجرا نوع را پاک نمی‌کند چون از اول اجباری نبوده — جنریک پایتون کاملاً ابزار ایستا و مستندسازی است. دروغ نگو: `Stack[str]` جلوی `push(123)` را در زمان اجرا نمی‌گیرد.
+
+## Protocol: قرارداد بدون وراثت
+
+```python
+from typing import Protocol
+
+class Speaker(Protocol):
+    def speak(self) -> str: ...
+
+def morning_call(animal: Speaker) -> None:
+    print(animal.speak())
+```
+
+هر شیئی که `speak` داشته باشد قبول است، بدون این‌که از کلاس مشترکی ارث برده باشد. این نزدیک‌ترین چیز به اینترفیس جاواست، ولی انعطاف‌پذیرتر: قرارداد ساختاری به‌جای سلسله‌مراتب اجباری.
+
+<Prerequisite ids={["modules-structure", "polymorphism-dispatch"]} />
+
+<Quiz
+  id="quiz-modules-packages-typing-1"
+  title="سنجش فهم — ماژول و نوع"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'Stack[str] در زمان اجرا جلوی push عدد را می‌گیرد؟',
+      options: [
+        { id: 'a', text: 'بله، TypeError می‌دهد' },
+        { id: 'b', text: 'نه؛ جنریک پایتون ایستاست و فقط ابزار بررسی و مستندسازی است' },
+        { id: 'c', text: 'فقط در CPython می‌گیرد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'اعلان نوع پایتون در زمان اجرا اجبار نمی‌شود؛ بررسی‌اش با mypy و ابزارهای ایستاست.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'تفاوت Protocol با ABC در یک جمله؟',
+      options: [
+        { id: 'a', text: 'Protocol قرارداد ساختاری بدون وراثت اجباری است؛ ABC وراثت می‌خواهد' },
+        { id: 'b', text: 'هیچ تفاوتی ندارند' },
+        { id: 'c', text: 'Protocol سریع‌تر اجراست' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'با Protocol هر شیئی با متد مناسب قبول است؛ با ABC باید صراحتاً ارث ببری.'
+    },
+  ]}
+/>

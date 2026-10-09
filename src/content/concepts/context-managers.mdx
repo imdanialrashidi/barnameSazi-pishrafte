@@ -1,0 +1,32 @@
+---
+type: concept
+title: زمینه‌بان‌ها
+short: with یعنی «ورود امن، خروج تضمینی»؛ برای هر منبعی که باید آزاد شود.
+description: "پروتکل زمینه‌بان، contextlib، ساختن مدیر سفارشی و الگوی قفل/فایل/اتصال."
+section: errors-testing
+difficulty: intermediate
+order: 3
+estimatedMinutes: 7
+tags: [زمینه‌بان, منبع]
+prerequisites: [exceptions-flow]
+---
+
+```python
+from contextlib import contextmanager
+
+@contextmanager
+def timer(label):
+    import time
+    start = time.perf_counter()
+    try:
+        yield
+    finally:
+        print(f"{label}: {time.perf_counter() - start:.3f} ثانیه")
+```
+
+هر چیزی که «گرفتن و آزادکردن» دارد (فایل، قفل، اتصال، تراکنش) باید زمینه‌بان باشد. `finally` داخلِ مولد تضمین می‌کند آزادسازی حتی با استثنا هم اجرا شود. برای چند منبع، `with`های تودرتو یا `ExitStack`؛ و برای تستِ کدِ دارای زمینه‌بان، همان `unittest` معمولی کافی است.
+
+<Misconception
+  wrong="زمینه‌بان فقط برای فایل است."
+  correct="فایل فقط معروف‌ترین مثال است. قفل ریسه، اتصال پایگاه‌داده، تغییر موقت دایرکتوری و زمان‌سنجی همه زمینه‌بان‌اند."
+/>

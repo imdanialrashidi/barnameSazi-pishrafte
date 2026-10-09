@@ -1,0 +1,90 @@
+---
+type: question
+title: تمرین جامع پایانی
+description: "شش پرسش ترکیبی از کل دوره: ردیابی، طراحی، استثنا، کالکشن، هم‌روندی و شبکه."
+section: review-project
+difficulty: advanced
+order: 3
+estimatedMinutes: 15
+points: 6
+instructions: آزمونِ پایان مسیر. هر پرسش یک گوشهٔ دوره را می‌سنجد؛ توضیحِ غلط‌ها را جدی بگیر.
+tags: [تمرین, جامع]
+---
+
+<Quiz
+  id="quiz-practice-final-1"
+  title="تمرین جامع — کل دوره"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'class C: total = 0 با دو نمونه و سه فراخوانیِ افزایش‌دهندهٔ هر دو (دو بار اولی، یک بار دومی). مقادیر؟',
+      options: [
+        { id: 'a', text: 'نمونه‌ای ۲ و ۱، کلاسی ۳' },
+        { id: 'b', text: 'هر سه ۳' },
+        { id: 'c', text: 'نمونه‌ای ۳ و ۳، کلاسی ۶' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'شمارندهٔ نمونه‌ای مستقل و شمارندهٔ کلاسی مشترک است: الگوی درس مرور.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'کدام تصمیم طراحی درست است؟',
+      options: [
+        { id: 'a', text: 'ماشین از موتور ارث ببرد' },
+        { id: 'b', text: 'ماشین موتور را ترکیب کند و از سازنده بگیرد' },
+        { id: 'c', text: 'موتور از ماشین ارث ببرد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'رابطه «دارد» است؛ ترکیب + تزریق وابستگی یعنی تعویض و تستِ ساده.'
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      text: 'کدام قطعه‌ کد EAFP است؟',
+      options: [
+        { id: 'a', text: 'if k in d: return d[k] else: return None' },
+        { id: 'b', text: 'try: return d[k] except KeyError: return None' },
+        { id: 'c', text: 'return d.get(k) if isinstance(d, dict) else None' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'امتحان‌کن و خطا را بگیر؛ در شرایط رقابتی هم امن‌تر است.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'عضویتِ مکرر در یک میلیون رکورد؟',
+      options: [
+        { id: 'a', text: 'list' },
+        { id: 'b', text: 'set' },
+        { id: 'c', text: 'tuple' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'عضویتِ هش‌محورِ میانگین O(1) در برابر پیمایشِ خطی.'
+    },
+    {
+      id: 'q5',
+      type: 'true-false',
+      text: 'بدون قفل، افزایش شمارندهٔ مشترک از چند ریسه همیشه دقیق است.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'خواندن-تغییر-نوشتن اتمی نیست؛ بدون محافظ، افزایش‌ها گم می‌شوند.'
+    },
+    {
+      id: 'q6',
+      type: 'multiple-choice',
+      text: 'دادهٔ کاربر برای ذخیره و ارسال بین‌سرویس. کدام؟',
+      options: [
+        { id: 'a', text: 'pickle بدون اعتبارسنجی' },
+        { id: 'b', text: 'JSON با اعتبارسنجی نوع و بازه' },
+        { id: 'c', text: 'repr شیء در فایل متنی' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'قالب امن + اعتبارسنجی؛ pickle روی دادهٔ نامطمئن معادل اجرای کد مهاجم است.'
+    },
+  ]}
+/>

@@ -1,0 +1,39 @@
+---
+type: concept
+title: ویژگی‌ها (property)
+short: متدی که مثل ویژگی خوانده می‌شود؛ قرارداد پایدار با اعتبارسنجی و محاسبهٔ پنهان.
+description: "property، setter و deleter: چرا قرارداد را پایدار نگه می‌دارند و دام محاسبات سنگین چیست."
+section: class-design
+difficulty: intermediate
+order: 3
+estimatedMinutes: 7
+tags: [property, کپسوله‌سازی]
+prerequisites: [encapsulation]
+---
+
+```python
+class Circle:
+    def __init__(self, radius):
+        self.radius = radius  # از setter می‌گذرد
+
+    @property
+    def radius(self):
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        if value < 0:
+            raise ValueError("شعاع منفی ناممکن است.")
+        self._radius = value
+
+    @property
+    def area(self):
+        return 3.14159 * self._radius ** 2
+```
+
+بیرون همیشه `c.radius` می‌بیند؛ ولی امروز اعتبارسنجی و فردا شاید لاگ اضافه شود بدون این‌که هیچ مصرف‌کننده‌ای عوض شود. دام: property باید **سریع و بدون غافلگیری** باشد — اگر محاسبه سنگین یا اثر جانبی دارد، اسمش را متد بگذار (`compute_area()`) تا خواننده انتظارِ هزینه را داشته باشد.
+
+<Misconception
+  wrong="property برای مخفی‌کردن کندیِ محاسبه از کاربر است."
+  correct="دقیقاً برعکس: خوانندهٔ property انتظار دسترسیِ ارزان دارد. هزینهٔ پنهان، خیانت به قرارداد است."
+/>

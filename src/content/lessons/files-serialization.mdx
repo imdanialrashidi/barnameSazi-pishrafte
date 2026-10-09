@@ -1,0 +1,106 @@
+---
+type: lesson
+title: فایل، ورودی/خروجی و سریال‌سازی
+description: "خواندن و نوشتن متن و باینری، pathlib، الگوهای زمینه‌بان، JSON و CSV و بار امن دادهٔ خارجی."
+section: files-io
+difficulty: intermediate
+order: 1
+estimatedMinutes: 25
+objective: بتوانی با pathlib و with فایل بخوانی و بنویسی و دادهٔ خارجی را امن سریال‌سازی کنی.
+tags: [فایل, pathlib, JSON, سریال‌سازی]
+prerequisites: [collections-algorithms]
+concepts: [pathlib-patterns, json-csv-safety]
+---
+
+هر برنامهٔ واقعی با دنیای بیرون حرف می‌زند و بیشتر این حرف‌زدن «فایل» است: خواندن پیکربندی، نوشتن گزارش، ذخیرهٔ وضعیت.
+
+## متن در برابر باینری
+
+فایل متنی را با انکدینگ (معمولاً UTF-8) می‌خوانیم و می‌نویسیم؛ فایل باینری (عکس، فشرده، مدل) را بایت‌به‌بایت. قاطی‌کردن این دو (مثل خواندن عکس در حالت متنی) داده را خراب می‌کند.
+
+```python
+from pathlib import Path
+
+# خواندن امن با زمینه‌بان: بسته‌شدن تضمینی حتی وسط خطا
+path = Path("data/scores.txt")
+lines = path.read_text(encoding="utf-8").splitlines()
+scores = [float(line) for line in lines if line.strip()]
+```
+
+`pathlib` مسیر را شیء می‌کند: `path.name`، `path.suffix`، `path.parent`، `path.exists()`. دیگر جمع‌کردن رشته با `/` و دردسر ویندوز/لینوکس تمام.
+
+## الگوی پردازش خط‌به‌خط
+
+```python
+def convert(input_path, output_path):
+    src, dst = Path(input_path), Path(output_path)
+    with src.open(encoding="utf-8") as fin, dst.open("w", encoding="utf-8") as fout:
+        for lineno, line in enumerate(fin, start=1):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue  # سطر خالی و نظر را رد کن
+            try:
+                fout.write(f"{lineno}: {float(line):.1f}\n")
+            except ValueError:
+                print(f"سطر {lineno} نامعتبر است و رد شد.")
+```
+
+دو نکتهٔ حرفه‌ای: فایل بزرگ را یک‌جا `read()` نکن (حافظه!) و دو فایل را در یک `with` باز کن تا هر دو تضمینی بسته شوند.
+
+## JSON و CSV
+
+```python
+import json, csv
+
+# JSON: زبان تبادل ساختارهای تودرتو
+config = {"host": "localhost", "port": 8000, "debug": True}
+Path("config.json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
+loaded = json.loads(Path("config.json").read_text(encoding="utf-8"))
+
+# CSV: زبان جدول‌های ساده
+with open("scores.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=["name", "score"])
+    writer.writeheader()
+    writer.writerows([{"name": "سارا", "score": 19}, {"name": "علی", "score": 17}])
+```
+
+<Callout type="danger" title="هشدار امنیتی pickle">
+  هرگز دادهٔ `pickle` از منبع نامطمئن را با `pickle.loads` باز نکن: pickle می‌تواند موقع بارگذاری کد دلخواه اجرا کند. برای دادهٔ خارجی فقط JSON یا CSV (با اعتبارسنجی) و برای دادهٔ داخلیِ مطمئن هم ترجیحاً JSON.
+</Callout>
+
+<Definition term="سریال‌سازی" id="serialization-def">
+  تبدیل ساختار حافظه‌ای (شیء، لیست، دیکشنری) به قالبی قابل ذخیره یا ارسال (بایت یا متن) و برگرداندن آن (deserialization). قرارداد قالب باید روشن و امن باشد.
+</Definition>
+
+<Prerequisite ids={["context-managers", "exceptions-flow"]} />
+
+<Quiz
+  id="quiz-files-serialization-1"
+  title="سنجش فهم — فایل و سریال‌سازی"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'فایل pickle رسیده از یک کاربر ناشناس را چه باید کرد؟',
+      options: [
+        { id: 'a', text: 'با pickle.loads بازش می‌کنیم' },
+        { id: 'b', text: 'بازش نمی‌کنیم؛ pickle ناامن می‌تواند کد اجرا کند' },
+        { id: 'c', text: 'اول تغییرنامش می‌دهیم بعد بازش می‌کنیم' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'بارگذاری pickle معادل اجرای کد است؛ دادهٔ نامطمئن فقط با قالب امن (JSON/CSV) و اعتبارسنجی.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'چرا فایل را با with باز می‌کنیم؟',
+      options: [
+        { id: 'a', text: 'سریع‌تر خوانده می‌شود' },
+        { id: 'b', text: 'بسته‌شدن تضمینی است حتی اگر وسط کار استثنا بیاید' },
+        { id: 'c', text: 'فقط برای فایل‌های باینری لازم است' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'زمینه‌بان در خروج (حتی با استثنا) فایل را می‌بندد؛ فراموش‌کردن close یعنی نشت منبع.'
+    },
+  ]}
+/>

@@ -1,0 +1,117 @@
+---
+type: lesson
+title: بازآرایی، کد تمیز و الگوهای طراحی
+description: "استدلال پشت بازآرایی: بوی کد، استخراج و جابه‌جایی، ساده‌سازی و الگوهای کاربردی با جایگزین پایتونیک."
+section: refactoring-patterns
+difficulty: advanced
+order: 1
+estimatedMinutes: 30
+objective: بتوانی بوی کد را تشخیص دهی، بازآرایی کوچک امن انجام دهی و الگوی مناسب را انتخاب کنی.
+tags: [بازآرایی, الگو, Strategy, انسجام]
+prerequisites: [files-serialization]
+concepts: [code-smells, simplifying-conditionals, design-patterns-python]
+---
+
+بازآرایی یعنی «تغییر ساختار داخلی بدون تغییر رفتار بیرونی». هدفش این است که تغییرِ بعدی ارزان شود، نه این‌که کد «قشنگ» شود.
+
+## بوی کد: نشانه‌ها، نه احکام
+
+- **تکرار**: یک منطق در سه جا کپی شده → استخراج تابع.
+- **تابع طولانی**: چند کار قاطی → شکستن به قدم‌ها.
+- **شرط تودرتوی عمیق**: → نگهبان (early return) و استخراج شرط.
+- **کلاس خدا**: همه‌چیز می‌داند → تقسیم مسئولیت.
+
+```python
+# قبل: شرط تودرتو
+def price(user, cart):
+    if user is not None:
+        if user.active:
+            if cart:
+                if user.coupon:
+                    return cart.total * 0.8
+                return cart.total
+    return 0
+
+# بعد: نگهبان + استخراج
+def price(user, cart):
+    if not (user and user.active and cart):
+        return 0
+    if user.coupon:
+        return cart.total * 0.8
+    return cart.total
+```
+
+## استخراج متد و جابه‌جایی
+
+قانون: هر بازآرایی کوچک، بعدش تست‌ها سبز. قدم‌های بزرگِ «همه‌چیز را بازنویسی می‌کنم» بدون تورِ تست، اسمش بازآرایی نیست، قمار است.
+
+## الگوها: ابزار، نه مد
+
+**Strategy** (راهبرد): خانواده‌ای از الگوریتم‌های قابل تعویض — در پایتون معمولاً فقط یک دیکشنریِ نام → تابع است، نه سلسله‌مراتب کلاس جاوایی:
+
+```python
+def normal_price(amount): return amount
+def student_price(amount): return amount * 0.7
+def vip_price(amount): return amount * 0.85
+
+STRATEGIES = {"normal": normal_price, "student": student_price, "vip": vip_price}
+
+def checkout(kind, amount):
+    return STRATEGIES[kind](amount)
+```
+
+**Observer** (ناظر): «وقتی X شد، همهٔ علاقه‌مندان باخبر شوند» — در پایتون با لیست callback:
+
+```python
+class Store:
+    def __init__(self):
+        self._listeners = []
+
+    def subscribe(self, callback):
+        self._listeners.append(callback)
+
+    def sell(self, item):
+        for callback in self._listeners:
+            callback(item)
+```
+
+**Singleton**: در پایتون تقریباً همیشه اشتباه است؛ به‌جایش از «یک نمونهٔ ماژول‌سطح» یا تزریق وابستگی استفاده کن. الگویی که در جاوا لازم بود، در پایتون با یک دیکشنری یا تابع حل می‌شود — آن را تحمیل نکن.
+
+**Facade** (نما): یک تابعِ ساده روی زیرسیستمِ پیچیده. **MVC**: جداکردن داده (Model) از نما (View) و کنترل — همان انضباطی که در درس GUI با «جدایی منطق از نما» می‌بینی.
+
+<Callout type="tip" title="ملاک انتخاب الگو">
+  اول ساده‌ترین کدِ خوانا را بنویس. فقط وقتی یک دردِ واقعی (تغییرِ مکرر در یک محور) دیدی، الگو بیاور. الگوی بدون درد، پیچیدگیِ بدون سود است.
+</Callout>
+
+<Prerequisite ids={["functions-responsibility", "composition-vs-inheritance", "unit-testing"]} />
+
+<Quiz
+  id="quiz-refactoring-patterns-1"
+  title="سنجش فهم — بازآرایی و الگو"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'تعریف درست بازآرایی چیست؟',
+      options: [
+        { id: 'a', text: 'تغییر ساختار داخلی بدون تغییر رفتار بیرونی' },
+        { id: 'b', text: 'اضافه‌کردن قابلیت تازه به کد قدیمی' },
+        { id: 'c', text: 'بازنویسی کامل ماژول از صفر' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'بازآرایی رفتار را حفظ و تغییرِ بعدی را ارزان می‌کند؛ قابلیت تازه کارِ بازآرایی نیست.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'پیاده‌سازی پایتونیک Strategy معمولاً چیست؟',
+      options: [
+        { id: 'a', text: 'سلسله‌مراتب کلاس انتزاعی مثل جاوا' },
+        { id: 'b', text: 'دیکشنری نام → تابع' },
+        { id: 'c', text: 'متغیر سراسری برای حالت' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'تابع‌ها در پایتون شهروند درجه‌یک‌اند؛ دیکشنریِ تابع ساده‌تر و خواناتر از درخت کلاس است.'
+    },
+  ]}
+/>

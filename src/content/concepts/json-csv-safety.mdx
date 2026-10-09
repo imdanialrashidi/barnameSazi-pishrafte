@@ -1,0 +1,27 @@
+---
+type: concept
+title: JSON و CSV و بار امن
+short: JSON برای تودرتو، CSV برای جدول؛ دادهٔ خارجی را اعتبارسنجی کن و pickle ناامن را باز نکن.
+description: "سریال‌سازی امن: json، csv، اعتبارسنجی ورودی و هشدار جدی pickle."
+section: files-io
+difficulty: intermediate
+order: 3
+estimatedMinutes: 8
+tags: [JSON, CSV, امنیت]
+prerequisites: [pathlib-patterns]
+---
+
+```python
+import json
+
+raw = '{"host": "localhost", "port": 8000}'
+config = json.loads(raw)
+assert isinstance(config.get("port"), int)  # اعتبارسنجی حداقلی
+```
+
+دادهٔ خارجی (فایل کاربر، پاسخ شبکه) **دشمنِ بالقوه** است: نوع را چک کن، بازه را چک کن، پیش‌فرض امن بگذار. و قانون آهنی: `pickle.loads` روی بایتِ نامطمئن = اجرای کدِ مهاجم. pickle فقط برای داده‌ای که خودت نوشته‌ای و به مسیرش اعتماد داری؛ بقیهٔ دنیا JSON یا CSV.
+
+<Misconception
+  wrong="چون pickle استانداردِ پایتون است، پس برای ذخیرهٔ ورودی کاربر هم مناسب است."
+  correct="استانداردبودن ربطی به امنیت ندارد. مستندات رسمی هم هشدار می‌دهد: unpickling دادهٔ نامطمئن می‌تواند کد دلخواه اجرا کند."
+/>

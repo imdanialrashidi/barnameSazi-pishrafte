@@ -1,0 +1,66 @@
+---
+type: question
+title: تمرین بازآرایی و الگوها
+description: "چهار پرسش از تعریف بازآرایی، نگهبان، Strategy و دام Singleton با پاسخ تشریحی."
+section: refactoring-patterns
+difficulty: advanced
+order: 6
+estimatedMinutes: 10
+points: 4
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, بازآرایی]
+---
+
+<Quiz
+  id="quiz-practice-refactoring-1"
+  title="تمرین — بازآرایی و الگو"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'بازآرایی یعنی چه؟',
+      options: [
+        { id: 'a', text: 'تغییر ساختار داخلی بدون تغییر رفتار بیرونی' },
+        { id: 'b', text: 'اضافه‌کردن قابلیت تازه' },
+        { id: 'c', text: 'حذف تست‌های قدیمی' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'رفتار ثابت، ساختار بهتر؛ قابلیت تازه کارِ بازآرایی نیست.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'هرمِ if چهارطبقه را با چه حرکتی تخت می‌کنی؟',
+      options: [
+        { id: 'a', text: 'شرط‌های بیشتر' },
+        { id: 'b', text: 'نگهبان (خروج زودهنگام) + استخراج شرط نام‌دار' },
+        { id: 'c', text: 'حذف همهٔ شرط‌ها' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'حالت‌های نامعتبر اول خارج می‌شوند و مسیر اصلی تخت و خوانا می‌ماند.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'Singleton در پایتون معمولاً بهترین راهِ مدیریتِ حالتِ مشترک است.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'حالت سراسری پنهان تست را سخت می‌کند؛ نمونهٔ ماژول‌سطح یا تزریق وابستگی تمیزتر است.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'کِی الگوی طراحی می‌آوری؟',
+      options: [
+        { id: 'a', text: 'از اولِ پروژه برای همهٔ بخش‌ها' },
+        { id: 'b', text: 'وقتی دردِ واقعی و تکراری در یک محور تغییر دیدی' },
+        { id: 'c', text: 'هرگز' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'الگو جوابِ دردِ تکراری است؛ زودترش پیچیدگیِ بی‌سود و دیرترش بدهیِ انباشته است.'
+    },
+  ]}
+/>

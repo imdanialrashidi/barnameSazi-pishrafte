@@ -11,6 +11,10 @@ const withOpacity = (variable) => `rgb(var(${variable}) / <alpha-value>)`;
 
 module.exports = {
   content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,md,mdx}', './content/**/*.{md,mdx}'],
+  // `table-scroll` is injected at build time by src/lib/remark-table-scroll.mjs
+  // (wrapping author-written Markdown tables), so content scanning never sees
+  // it and Tailwind would tree-shake its @layer rule. Keep it explicitly.
+  safelist: ['table-scroll'],
   theme: {
     screens: {
       xs: '360px',

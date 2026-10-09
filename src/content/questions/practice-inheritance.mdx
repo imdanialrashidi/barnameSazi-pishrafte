@@ -1,0 +1,78 @@
+---
+type: question
+title: تمرین وراثت و چندریختی
+description: "پنج پرسش از بازنویسی، super، چندریختی، ABC و MRO با پاسخ تشریحی."
+section: inheritance
+difficulty: intermediate
+order: 8
+estimatedMinutes: 12
+points: 5
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, وراثت]
+---
+
+<Quiz
+  id="quiz-practice-inheritance-1"
+  title="تمرین — وراثت و چندریختی"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'کلاس B از A ارث می‌برد و __init__ خودش را دارد ولی super().__init__ را صدا نمی‌زند. چه می‌شود؟',
+      options: [
+        { id: 'a', text: 'پایتون خودکار سازندهٔ والد را اجرا می‌کند' },
+        { id: 'b', text: 'ویژگی‌هایی که والد می‌ساخت وجود ندارند و خطای AttributeError محتمل است' },
+        { id: 'c', text: 'ارث‌بری کلاً لغو می‌شود' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'سازندهٔ والد خودکار اجرا نمی‌شود؛ حالت پایه ساخته نمی‌شود و دسترسی به آن ویژگی‌ها خطا می‌دهد.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'کدام گزینه چندریختی را بهتر توصیف می‌کند؟',
+      options: [
+        { id: 'a', text: 'تابعی که فقط یک نوع ورودی قبول می‌کند' },
+        { id: 'b', text: 'یک رابط (مثل speak) با رفتار متفاوت در هر نوع، بدون تغییر کدِ مصرف‌کننده' },
+        { id: 'c', text: 'کپی‌کردن یک تابع برای هر نوع' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'ماهیت چندریختی همین است: کد عمومی، رفتار خاصِ هر نوع، توسعه بدون تغییر.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'از کلاسی که متد انتزاعیِ پیاده‌نشده دارد (ABC) می‌شود مستقیم نمونه ساخت.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'ساخت نمونه TypeError می‌دهد؛ همین اجبار، ارزش ABC است.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'در D(B, C) که هر دو از A ارث می‌برند، ترتیب جست‌وجوی متد چیست؟',
+      options: [
+        { id: 'a', text: 'D سپس B سپس C سپس A' },
+        { id: 'b', text: 'D سپس A سپس B سپس C' },
+        { id: 'c', text: 'تصادفی است' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'MRO با C3 خطی‌سازی می‌شود: ترتیب والدها حفظ و هر کلاس یک‌بار دیده می‌شود.'
+    },
+    {
+      id: 'q5',
+      type: 'multiple-choice',
+      text: 'برای قراردادی که فقط «شکل» می‌خواهد و نمی‌خواهی وراثت تحمیل کنی، کدام بهتر است؟',
+      options: [
+        { id: 'a', text: 'ABC با متد انتزاعی' },
+        { id: 'b', text: 'Protocol (قرارداد ساختاری)' },
+        { id: 'c', text: 'کپی‌کردن کد در هر کلاس' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'Protocol بدون وراثت اجباری کار می‌کند؛ ABC وقتی است که واقعاً سلسله‌مراتب می‌خواهی.'
+    },
+  ]}
+/>

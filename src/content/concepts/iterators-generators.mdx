@@ -1,0 +1,29 @@
+---
+type: concept
+title: تکرارگرها و مولدها
+short: تکرارپذیر را می‌شود چند بار پیمود؛ تکرارگر یک‌بارمصرف است و مولد تنبل تولید می‌کند.
+description: "پروتکل تکرار، next و StopIteration، yield و مولدهای بی‌نهایت با مثال عملی."
+section: data-structures
+difficulty: intermediate
+order: 2
+estimatedMinutes: 8
+tags: [تکرارگر, مولد]
+prerequisites: [mutability-identity]
+---
+
+```python
+def fibonacci():
+    a, b = 0, 1
+    while True:  # دنبالهٔ بی‌نهایت — فقط با مولد ممکن است
+        yield a
+        a, b = b, a + b
+
+gen = fibonacci()
+print([next(gen) for _ in range(7)])  # [0, 1, 1, 2, 3, 5, 8]
+```
+
+سه سطح را قاطی نکن: **تکرارپذیر** (list — هر بار از اول)، **تکرارگر** (خروجی `iter()` — یک‌بارمصرف و حالت‌دار)، **مولد** (تابعِ دارای `yield` — تکرارگری که تنبل می‌سازد). عبارت‌های مولدی `(x*x for x in range(n))` هم همان تنبلی را در یک خط می‌دهند.
+
+<Callout type="warning" title="دام یک‌بارمصرفی">
+  تکرارگرِ مصرف‌شده دوباره از اول شروع نمی‌شود؛ ساکت خالی برمی‌گرداند. اگر دو بار لازمش داری، یا لیستش کن یا از تکرارپذیرِ سازنده‌اش دوباره `iter` بگیر.
+</Callout>

@@ -1,0 +1,31 @@
+---
+type: concept
+title: ماژول و ساختار پروژه
+short: هر فایل یک ماژول است؛ نگهبان __main__ اجرای مستقیم را از واردشدن جدا می‌کند.
+description: "ماژول چیست و نگهبان if __name__ == '__main__' چرا لازم است؛ ساختار تمیز پروژهٔ کوچک."
+section: prerequisites
+difficulty: beginner
+order: 4
+estimatedMinutes: 6
+tags: [ماژول, پروژه]
+prerequisites: [functions-responsibility]
+---
+
+<Definition term="ماژول" id="module-def">
+  هر فایل پایتون یک ماژول است با فضای نام خودش؛ `import` آن را اجرا و نام‌هایش را در دسترس می‌گذارد.
+</Definition>
+
+```python
+# greet.py
+def hello(name):
+    return f"سلام {name}!"
+
+if __name__ == "__main__":
+    print(hello("دنیا"))
+```
+
+اجرای مستقیم (`python greet.py`) بلوک نگهبان را اجرا می‌کند، ولی `import greet` از فایل دیگر آن را رد می‌کند. بدون نگهبان، import کردنِ یک اسکریپت، کل کد اجرایی‌اش را هم اجرا می‌کند — رایج‌ترین کثیفی پروژه‌های تازه‌کار.
+
+<Callout type="tip" title="ساختار سه‌تایی">
+  پروژهٔ کوچک سالم: `logic.py` (رفتار خالص)، `main.py` (ورودی/خروجی و نگهبان)، `tests/` (تست). همین سه‌تایی را تا آخر دوره در همهٔ مثال‌ها می‌بینی.
+</Callout>

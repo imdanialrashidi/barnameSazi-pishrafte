@@ -1,0 +1,45 @@
+---
+type: example
+title: تخفیف راهبردی بدون if تودرتو
+description: "جایگزینی زنجیرهٔ شرط با Strategy تابعی: دیکشنری نام → تابع و افزودن راهبرد تازه در یک خط."
+section: refactoring-patterns
+difficulty: intermediate
+order: 5
+estimatedMinutes: 12
+problem: "سه نوع تخفیف داری و نوع چهارم در راه است؛ کدی بنویس که افزودن راهبرد، تغییر کدِ موجود نخواهد."
+tags: [Strategy, بازآرایی]
+---
+
+<WorkedExample
+  title="موتور تخفیف"
+  problem="دانشجویی ۳۰٪، ویژه ۱۵٪، عادی صفر؛ فردا «کارمندی ۲۰٪» هم می‌آید. چه ساختاری؟"
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — بوی کد', content: 'زنجیرهٔ if/elif روی kind: هر راهبردِ تازه یعنی دست‌زدن به همین تابع و ریسک شکستن بقیه.' },
+    { title: 'گام ۲ — Strategy تابعی', content: 'هر راهبرد یک تابع؛ جدول STRATEGIES نگاشت نام به تابع.' },
+    { title: 'گام ۳ — افزودن', content: 'راهبرد تازه فقط یک تابع + یک ورودی جدول است؛ checkout دست نمی‌خورد.' },
+    { title: 'گام ۴ — تست', content: 'هر راهبرد جداگانه تست می‌شود؛ جدول هم با کلید ناموجود (KeyError) رفتار مشخص دارد.' },
+  ]}
+/>
+
+```python
+def normal(amount): return amount
+def student(amount): return amount * 0.7
+def vip(amount): return amount * 0.85
+def staff(amount): return amount * 0.8  # راهبرد تازه: فقط همین دو خط
+
+STRATEGIES = {"normal": normal, "student": student, "vip": vip, "staff": staff}
+
+def checkout(kind, amount):
+    try:
+        return STRATEGIES[kind](amount)
+    except KeyError:
+        raise ValueError(f"نوع تخفیف ناشناخته: {kind}")
+
+print(checkout("student", 100))  # 70.0
+```
+
+<Misconception
+  wrong="برای این کار باید سلسله‌مراتب کلاس Strategy می‌ساختیم."
+  correct="وقتی راهبردها حالت ندارند، تابع کافی است. کلاس را برای وقتی نگه دار که راهبرد داده و چرخهٔ عمر خودش را داشته باشد."
+/>

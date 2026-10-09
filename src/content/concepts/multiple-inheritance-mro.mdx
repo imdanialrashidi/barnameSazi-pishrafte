@@ -1,0 +1,37 @@
+---
+type: concept
+title: وراثت چندگانه و MRO
+short: پایتون وراثت چندگانه دارد و ترتیب حل متد (MRO) با C3 خطی‌سازی مشخص می‌شود.
+description: "وراثت چندگانه، ترتیب حل متد، super مشارکتی و کاربرد درست میکسین‌ها."
+section: inheritance
+difficulty: advanced
+order: 6
+estimatedMinutes: 9
+tags: [MRO, وراثت-چندگانه, میکسین]
+prerequisites: [inheritance-overriding]
+---
+
+```python
+class A:
+    def hello(self): return "A"
+
+class B(A):
+    def hello(self): return "B"
+
+class C(A):
+    def hello(self): return "C"
+
+class D(B, C): pass
+
+print(D.__mro__)  # D → B → C → A → object
+print(D().hello())  # B
+```
+
+پایتون متد را در همین ترتیبِ `__mro__` جست‌وجو می‌کند (الگوریتم C3: حفظ ترتیب والدها + احترام به ارث‌بری). `super()` هم در همین زنجیره قدم می‌زند، پس در وراثت چندگانه باید «مشارکتی» نوشته شود (هر `__init__` زنجیره را با `super().__init__()` ادامه دهد و آرگومان‌ها را با `**kwargs` رد کند).
+
+کاربردِ سالم وراثت چندگانه فقط **میکسین** است: کلاس‌های کوچکِ تک‌منظوره (مثل `JsonMixin`) که حالتِ خودشان را نمی‌سازند و فقط یک قابلیت اضافه می‌کنند. درخت عمیقِ چندوالدی، بدهی فنی است.
+
+<Misconception
+  wrong="الماسِ وراثت (دو مسیر به یک والد) در پایتون والد را دوبار اجرا می‌کند."
+  correct="MRO هر کلاس را فقط یک‌بار در زنجیره نگه می‌دارد؛ مشکلِ «دوبار اجرا» فقط وقتی می‌آید که super مشارکتی رعایت نشده باشد."
+/>

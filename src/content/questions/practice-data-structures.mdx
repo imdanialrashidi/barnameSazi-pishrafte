@@ -1,0 +1,74 @@
+---
+type: question
+title: تمرین کالکشن و الگوریتم
+description: "پنج پرسش از انتخاب ساختار، مولد، پیچیدگی و جست‌وجو با پاسخ تشریحی."
+section: data-structures
+difficulty: intermediate
+order: 9
+estimatedMinutes: 12
+points: 5
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, کالکشن]
+---
+
+<Quiz
+  id="quiz-practice-data-structures-1"
+  title="تمرین — کالکشن و الگوریتم"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'یک میلیون بررسی عضویت روی مجموعهٔ ثابتِ بزرگ. کدام؟',
+      options: [
+        { id: 'a', text: 'list' },
+        { id: 'b', text: 'set' },
+        { id: 'c', text: 'tuple' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'عضویت در set میانگین O(1) و در list/tuple خطی است؛ در این مقیاس تفاوتِ ثانیه و ساعت است.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'چرا برای دنبالهٔ ده‌میلیاردی از مولد استفاده می‌کنیم؟',
+      options: [
+        { id: 'a', text: 'چون همیشه سریع‌تر است' },
+        { id: 'b', text: 'چون حافظهٔ ثابت می‌خواهد و لیستِ کامل در RAM جا نمی‌شود' },
+        { id: 'c', text: 'چون ایندکس دارد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'مولد تنبل تولید می‌کند؛ لیستِ ده‌میلیاردی اصلاً ساخته نمی‌شود که بخواهد سریع باشد.'
+    },
+    {
+      id: 'q3',
+      type: 'numeric',
+      text: 'جست‌وجوی دودویی روی ۱۰۲۴ عضو مرتب حداکثر چند گام می‌خواهد؟ (فقط عدد)',
+      numericAnswer: 11,
+      tolerance: 0,
+      explanation: 'سقف log2(1024) بعلاوهٔ یک: log2(1024)=10 پس ۱۱ گام.'
+    },
+    {
+      id: 'q4',
+      type: 'true-false',
+      text: 'تکرارگرِ مصرف‌شده را می‌شود دوباره از اول پیمود.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'تکرارگر یک‌بارمصرف و حالت‌دار است؛ برای پیمایش دوباره باید iter تازه بگیری.'
+    },
+    {
+      id: 'q5',
+      type: 'multiple-choice',
+      text: 'فقط ۵ جست‌وجو روی لیستِ نامرتبِ ۱۰۰۰تایی داری. بهترین کار؟',
+      options: [
+        { id: 'a', text: 'اول مرتب کن بعد دودویی بگرد' },
+        { id: 'b', text: 'همان جست‌وجوی خطی؛ هزینهٔ مرتب‌سازی نمی‌ارزد' },
+        { id: 'c', text: 'به لیست پیوندی تبدیل کن' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'مرتب‌سازی O(n log n) برای ۵ جست‌وجو گران‌تر از ۵ پیمایش خطی تمام می‌شود. هزینهٔ کل را حساب کن.'
+    },
+  ]}
+/>

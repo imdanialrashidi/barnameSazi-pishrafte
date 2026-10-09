@@ -1,0 +1,62 @@
+---
+type: example
+title: فروشگاه کوچک (پروژهٔ پایانی)
+description: "جمع‌بندی عملی دوره: دیتاکلاس، Strategy، JSON، تست و صف هم‌روند در یک پروژهٔ منسجم."
+section: review-project
+difficulty: advanced
+order: 2
+estimatedMinutes: 25
+problem: "فروشگاه بساز: کاتالوگ، سبد با تخفیف راهبردی، ذخیرهٔ JSON، تست سبز و گزارش هم‌روند امن."
+tags: [پروژه, جمع‌بندی]
+---
+
+<WorkedExample
+  title="فروشگاه کوچک"
+  problem="از کجا شروع می‌کنی و هر بخشِ دوره کجای این پروژه می‌نشیند؟"
+  difficulty="advanced"
+  steps={[
+    { title: 'گام ۱ — مدل داده', content: 'Product دیتاکلاس است (دادهٔ خالص) و Cart رفتار دارد (افزودن، جمع، تخفیف).' },
+    { title: 'گام ۲ — تخفیف', content: 'Strategy تابعی: جدولِ نام → تابع؛ افزودنِ نوع تازه بدون دست‌زدن به checkout.' },
+    { title: 'گام ۳ — ماندگاری', content: 'ذخیره و بارگذاری JSON با اعتبارسنجی؛ هیچ pickleای در کار نیست.' },
+    { title: 'گام ۴ — اطمینان', content: 'تست منطق با unittest و گزارش‌گیریِ موازی با صف امن‌ریسه‌ای.' },
+  ]}
+/>
+
+```python
+import json, queue, threading
+from dataclasses import dataclass, asdict
+
+@dataclass
+class Product:
+    sku: str
+    name: str
+    price: float
+
+DISCOUNTS = {"normal": lambda a: a, "student": lambda a: a * 0.7}
+
+class Cart:
+    def __init__(self):
+        self.items = []
+    def add(self, product, qty=1):
+        if qty <= 0:
+            raise ValueError("تعداد باید مثبت باشد.")
+        self.items.append({"product": product, "qty": qty})
+    def total(self, kind="normal"):
+        raw = sum(i["product"].price * i["qty"] for i in self.items)
+        try:
+            return DISCOUNTS[kind](raw)
+        except KeyError:
+            raise ValueError(f"تخفیف ناشناخته: {kind}")
+
+def save(products, path):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump([asdict(p) for p in products], f, ensure_ascii=False, indent=2)
+
+cart = Cart()
+cart.add(Product("b1", "کتاب", 12000), 2)
+print(cart.total("student"))  # 16800.0
+```
+
+<Callout type="tip" title="معیار قبولی">
+  تست‌ها سبز، منطق از نما جدا، دادهٔ خارجی اعتبارسنجی‌شده، و READMEای که بگوید «چرا ترکیب؟ چرا Strategy تابعی؟». پروژه‌ای که نتوانی تصمیم‌هایش را توضیح دهی، تمام نشده.
+</Callout>

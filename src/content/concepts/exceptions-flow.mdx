@@ -1,0 +1,28 @@
+---
+type: concept
+title: استثناها و جریان انتشار
+short: استثنا تا اولین except سازگار بالا می‌رود؛ سلسله‌مراتب و ترتیب خاص‌به‌عام را بشناس.
+description: "سلسله‌مراتب استثنا، try/except/else/finally، استثنای دامنه‌ای و قانون مرز ترجمه."
+section: errors-testing
+difficulty: intermediate
+order: 2
+estimatedMinutes: 8
+tags: [استثنا, خطا]
+prerequisites: [functions-responsibility]
+---
+
+```python
+class CardExpiredError(ValueError):
+    """کارت منقضی شده — خطای دامنه‌ای قابل‌فهم برای لایهٔ بالا."""
+
+def charge(card, amount):
+    if card.expired:
+        raise CardExpiredError("کارت منقضی است؛ لطفاً کارت تازه وارد کنید.")
+    return gateway.charge(card, amount)  # خطای فنیِ درگاه همین‌جا ترجمه می‌شود
+```
+
+قوانین جریان: `except` از خاص به عام؛ `else` فقط مسیر موفقیت؛ `finally` همیشه (حتی با `return` وسط `try`)؛ استثنای گرفته‌نشده حباب‌وار بالا می‌رود تا مفسر با Traceback متوقفش کند. هرگز `except Exception: pass` ننویس — یا چیزی را مدیریت کن یا بگذار بالا برود.
+
+<Callout type="tip" title="EAFP">
+  سبک پایتونیک: اول امتحان کن بعد خطا را بگیر، نه این‌که قبلش صد شرط بپرسی. `try: value = cache[k] except KeyError: value = load(k)` از `if k in cache` خواناتر و مسابقه‌امن‌تر است.
+</Callout>

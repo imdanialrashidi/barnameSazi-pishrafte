@@ -1,0 +1,37 @@
+---
+type: concept
+title: متدهای جادویی (dunder)
+short: با __str__ و __eq__ و عملگرها به شیءها رفتار طبیعیِ پایتونی می‌دهی.
+description: "مهم‌ترین dunderها: نمایش، برابری، طول، عملگر و پروتکل تکرار با جدول انتخاب."
+section: class-design
+difficulty: intermediate
+order: 4
+estimatedMinutes: 9
+tags: [dunder, عملگر]
+prerequisites: [self-init]
+---
+
+نام‌های دوروآندرلاین (`__x__`) قراردادِ زبان‌اند، نه جادو: هر کدام یک پروتکل را فعال می‌کند.
+
+| متد | فعال می‌کند | نکته |
+|---|---|---|
+| `__repr__` | نمایش توسعه‌دهنده | ترجیحاً شبیه سازنده |
+| `__str__` | نمایش کاربر (`print`) | اگر نبود، از `__repr__` استفاده می‌شود |
+| `__eq__` | `==` | اگر تعریف کردی، به `__hash__` هم فکر کن |
+| `__len__` | `len()` | باید نامنفی برگرداند |
+| `__add__` | `+` | شیء تازه برگردان، نه تغییر درجا |
+| `__iter__` | حلقهٔ `for` | دروازهٔ تکرارپذیرشدن |
+
+```python
+class Book:
+    def __init__(self, title, pages):
+        self.title, self.pages = title, pages
+    def __repr__(self):
+        return f"Book({self.title!r}, {self.pages!r})"
+    def __eq__(self, other):
+        return (self.title, self.pages) == (other.title, other.pages)
+```
+
+<Callout type="warning" title="دام هش">
+  تعریف `__eq__` مقدار `__hash__` را `None` می‌کند (شیء غیرقابل‌درهم‌سازی می‌شود و در `set`/`dict` نمی‌نشیند) مگر این‌که خودت `__hash__` را تعریف کنی. اگر شیء جهش‌پذیر است، معمولاً همان غیرقابل‌هش‌بودنِ پیش‌فرض درست است.
+</Callout>

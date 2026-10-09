@@ -1,0 +1,66 @@
+---
+type: question
+title: تمرین طراحی پیشرفتهٔ کلاس‌ها
+description: "چهار پرسش از classmethod، property، dunder و چرخهٔ عمر شیء با پاسخ تشریحی."
+section: class-design
+difficulty: intermediate
+order: 7
+estimatedMinutes: 10
+points: 4
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, کلاس]
+---
+
+<Quiz
+  id="quiz-practice-class-design-1"
+  title="تمرین — طراحی کلاس"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'سازندهٔ جایگزین (مثل from_string) را چرا classmethod می‌کنیم؟',
+      options: [
+        { id: 'a', text: 'چون سریع‌تر است' },
+        { id: 'b', text: 'چون cls کلاسِ صداکننده (حتی زیرکلاس) را می‌دهد و شیءِ درست ساخته می‌شود' },
+        { id: 'c', text: 'چون staticmethod در پایتون وجود ندارد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'چندریختی سطح کلاس: زیرکلاس همان سازنده را صدا بزند، نمونهٔ خودش را می‌گیرد.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'بعد از تعریف __eq__ بدون __hash__، چه اتفاقی برای عضویت در set می‌افتد؟',
+      options: [
+        { id: 'a', text: 'هیچ تغییری؛ مثل قبل کار می‌کند' },
+        { id: 'b', text: 'شیء غیرقابل‌هش می‌شود و در set نمی‌نشیند' },
+        { id: 'c', text: 'خودکار __hash__ سازگار ساخته می‌شود' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'پایتون __hash__ را None می‌کند؛ اگر هش لازم است باید صریح و سازگار با __eq__ تعریفش کنی.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'می‌شود برای بستن فایلِ مهم به __del__ اعتماد کرد.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'زمان اجرای __del__ تضمینی نیست؛ منبع مهم را همیشه با زمینه‌بان (with) مدیریت می‌کنیم.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'کدام ویژگی باید property بماند و کدام باید متد شود؟',
+      options: [
+        { id: 'a', text: 'محاسبهٔ سنگین شبکه → property؛ خواندن ساده → متد' },
+        { id: 'b', text: 'خواندن ساده و ارزان → property؛ محاسبهٔ سنگین یا اثر جادویی → متد نام‌دار' },
+        { id: 'c', text: 'فرقی ندارد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'خوانندهٔ property انتظار دسترسی ارزان دارد؛ هزینهٔ پنهان خیانت به قرارداد است.'
+    },
+  ]}
+/>

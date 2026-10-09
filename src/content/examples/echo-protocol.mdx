@@ -1,0 +1,62 @@
+---
+type: example
+title: پروتکل اکوی کوچک با سوکت
+description: "کلاینت و سرور TCP که پیام طول‌اول می‌فرستند: قرارداد مرز پیام در عمل."
+section: concurrency-network
+difficulty: advanced
+order: 6
+estimatedMinutes: 15
+problem: "سرور اکویی بساز که پیام فارسی را بگیرد و با پیشوند echo برگرداند؛ مرز پیام را هم حل کن."
+tags: [سوکت, پروتکل]
+---
+
+<WorkedExample
+  title="اکوی طول‌اول"
+  problem="چرا فرستادنِ خام کافی نیست و ۴ بایت طول اولِ پیام چه مشکلی را حل می‌کند؟"
+  difficulty="advanced"
+  steps={[
+    { title: 'گام ۱ — قرارداد', content: 'هر پیام = ۴ بایت طول (big-endian) + همان‌قدر بایتِ UTF-8. گیرنده دقیقاً می‌داند چقدر بخواند.' },
+    { title: 'گام ۲ — ارسال', content: 'send_message: encode، طول، sendall.' },
+    { title: 'گام ۳ — دریافت', content: 'recv_exact در حلقه تا رسیدنِ کامل — چون recv ممکن است تکه‌تکه بدهد.' },
+    { title: 'گام ۴ — سرور', content: 'گوش‌دادن، قبول، اکو با پیشوند، بستنِ تمیز با with.' },
+  ]}
+/>
+
+```python
+import socket, struct
+
+def send_message(sock, text):
+    data = text.encode("utf-8")
+    sock.sendall(struct.pack(">I", len(data)) + data)
+
+def recv_exact(sock, n):
+    buf = b""
+    while len(buf) < n:
+        chunk = sock.recv(n - len(buf))
+        if not chunk:
+            raise ConnectionError("اتصال وسط پیام قطع شد.")
+        buf += chunk
+    return buf
+
+def recv_message(sock):
+    (length,) = struct.unpack(">I", recv_exact(sock, 4))
+    return recv_exact(sock, length).decode("utf-8")
+
+# سرور (در یک ترمینال)
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind(("127.0.0.1", 65432))
+    s.listen(1)
+    conn, addr = s.accept()
+    with conn:
+        msg = recv_message(conn)
+        send_message(conn, "echo:" + msg)
+
+# کلاینت (در ترمینال دیگر)
+with socket.create_connection(("127.0.0.1", 65432), timeout=5) as s:
+    send_message(s, "سلام سرور")
+    print(recv_message(s))  # echo:سلام سرور
+```
+
+<Callout type="tip" title="چرا طول‌اول؟">
+  TCP «جریان» است نه «پیام»: دو send پشت‌سرهم ممکن است در یک recv قاطی برسند. بدون قراردادِ مرز، گیرنده نمی‌فهمد پیام کجا تمام شد.
+</Callout>

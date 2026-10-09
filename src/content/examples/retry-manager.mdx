@@ -1,0 +1,55 @@
+---
+type: example
+title: تلاش مجدد با زمینه‌بان
+description: "ترکیب contextmanager و استثنا: منبعی که امن آزاد می‌شود و عملیاتی که با تلاش مجدد اجرا می‌شود."
+section: errors-testing
+difficulty: intermediate
+order: 6
+estimatedMinutes: 12
+problem: "یک اتصال شبیه‌سازی‌شده بساز که دوبار اول خطا می‌دهد؛ با تلاش مجدد وصل شو و آزادسازی را تضمین کن."
+tags: [زمینه‌بان, استثنا]
+---
+
+<WorkedExample
+  title="اتصالِ شکننده"
+  problem="اتصال دوبار اول ConnectionError می‌دهد و بار سوم موفق است. کدی بنویس که حداکثر ۳ بار تلاش کند و اتصال را همیشه ببندد."
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — خطای دامنه‌ای', content: 'خطای فنیِ اتصال همان می‌ماند؛ فقط پیامش برای لایهٔ بالا روشن است.' },
+    { title: 'گام ۲ — زمینه‌بان', content: 'اتصال با with گرفته و در finally بسته می‌شود — حتی وسط استثنا.' },
+    { title: 'گام ۳ — حلقهٔ تلاش', content: 'فقط ConnectionError را دوباره امتحان می‌کند؛ خطای دیگر فوراً بالا می‌رود.' },
+    { title: 'گام ۴ — سقف تلاش', content: 'بعد از ۳ شکست، استثنا رها می‌شود تا لایهٔ بالا تصمیم بگیرد.' },
+  ]}
+/>
+
+```python
+from contextlib import contextmanager
+
+attempts = {"n": 0}
+
+@contextmanager
+def connection():
+    print("اتصال باز شد.")
+    try:
+        yield "conn"
+    finally:
+        print("اتصال بسته شد.")
+
+def fragile_fetch():
+    attempts["n"] += 1
+    if attempts["n"] < 3:
+        raise ConnectionError("قطعی موقت.")
+    return "داده رسید!"
+
+with connection():
+    for i in range(3):
+        try:
+            print(fragile_fetch())
+            break
+        except ConnectionError as e:
+            print(f"تلاش {i+1} ناموفق: {e}")
+```
+
+<Callout type="warning" title="فقط خطای موقت">
+  تلاش مجدد فقط برای خطایِ گذراست (قطعی شبکه). خطای قطعی (احراز هویت، ورودی نامعتبر) را دوباره امتحان نکن — هم کندی، هم خطر (مثل شارژِ دوباره!).
+</Callout>

@@ -1,0 +1,26 @@
+---
+type: concept
+title: سوکت و TCP
+short: سوکت نقطهٔ پایانی اتصال است؛ در TCP سرور گوش می‌دهد، کلاینت وصل می‌شود و بایت ردوبدل می‌شود.
+description: "چرخهٔ سوکت TCP، بایت در برابر رشته، مرز پیام و تفاوت TCP و UDP."
+section: concurrency-network
+difficulty: advanced
+order: 4
+estimatedMinutes: 10
+tags: [سوکت, TCP, شبکه]
+prerequisites: [executors-queues]
+---
+
+```python
+import socket
+# کلاینتِ کمینه: وصل شو، بفرست، بگیر، ببند
+with socket.create_connection(("127.0.0.1", 65432), timeout=5) as s:
+    s.sendall("ping".encode("utf-8"))
+    print(s.recv(1024).decode("utf-8"))
+```
+
+چهار حقیقتِ شبکه: (۱) سوکت **بایت** می‌فهمد — `encode`/`decode` و قراردادِ انکدینگ با توست؛ (۲) `recv` ممکن است کمتر از خواسته‌ات برگرداند — برای پیامِ کامل حلقه بزن یا از `makefile` استفاده کن؛ (۳) TCP جریانِ مطمئن و مرتب است، UDP دیتاگرامِ سریعِ بدون تضمین — انتخاب با نیازِ مسئله؛ (۴) مرز پیام (کِی یک «پیام» تمام شد؟) در TCP وجود ندارد: طول‌اول، جداکننده یا بستنِ اتصال، قراردادِ توست.
+
+<Callout type="tip" title="اشکال‌زدایی شبکه">
+  اول با `127.0.0.1` محلی تست کن، تایم‌اوت بگذار (گیرِ ابدی ممنوع)، و خطاها (ConnectionRefused، Timeout) را مثل هر استثنای دیگری مدیریت کن.
+</Callout>

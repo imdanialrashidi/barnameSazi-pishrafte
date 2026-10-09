@@ -1,0 +1,40 @@
+---
+type: formula
+title: رده‌های رایج پیچیدگی
+name: "رده‌های رایج پیچیدگی"
+description: "مرتب‌سازی رده‌های پیچیدگی از ثابت تا نمایی و نگاشت هر کدام به مثال ملموس پایتونی."
+section: data-structures
+difficulty: intermediate
+order: 5
+estimatedMinutes: 6
+prerequisites: [big-o-definition]
+tags: [پیچیدگی, مقایسه]
+latex: "O(1) < O(\\log n) < O(n) < O(n \\log n) < O(n^2) < O(2^n)"
+conditions:
+  - ترتیب برای nهای بزرگ معتبر است.
+  - عضویت set/dict به‌صورت میانگین O(1) است، نه بدترین حالت تضمینی.
+---
+
+<Formula
+  id="common-complexities"
+  latex={"O(1) < O(\\log n) < O(n) < O(n \\log n) < O(n^2) < O(2^n)"}
+  caption="زنجیرهٔ رشد: هر رده برای ورودی بزرگ، دنیایی با ردهٔ بعد فرق دارد"
+/>
+
+<FormulaBreakdown
+  title="هر رده یعنی چه؟"
+  terms={[
+    { term: 'O(1)', label: 'ثابت', detail: 'دسترسی ایندکسی لیست، عضویت set (میانگین)' },
+    { term: 'O(\\log n)', label: 'لگاریتمی', detail: 'جست‌وجوی دودویی روی دادهٔ مرتب' },
+    { term: 'O(n)', label: 'خطی', detail: 'یک پیمایش کامل: جست‌وجوی خطی، map ساده' },
+    { term: 'O(n \\log n)', label: 'خطی-لگاریتمی', detail: 'مرتب‌سازی‌های خوب مثل sorted' },
+    { term: 'O(n^2)', label: 'درجه‌دوم', detail: 'حلقهٔ تودرتو روی همان داده' },
+    { term: 'O(2^n)', label: 'نمایی', detail: 'جست‌وجوی فراگیرِ همهٔ زیرمجموعه‌ها — برای n بزرگ ناممکن' },
+  ]}
+/>
+
+شهودِ مقیاس: اگر n ده برابر شود، هزینهٔ <Formula inline latex={"O(n)"} /> ده برابر و هزینهٔ <Formula inline latex={"O(n^2)"} /> صد برابر می‌شود. برای n=۱۰۰۰۰۰ تفاوتِ «یک ثانیه» و «سه ساعت» همین‌جاست.
+
+<Callout type="warning" title="میانگین در برابر بدترین">
+  عضویت در `set` به‌صورت میانگین <Formula inline latex={"O(1)"} /> است ولی بدترینِ تئوریکش خطی است. در مصاحبه و امتحان بگو «میانگین»؛ در تحلیلِ بدبینانه، بدترین را حساب کن.
+</Callout>

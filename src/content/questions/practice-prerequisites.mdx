@@ -1,0 +1,74 @@
+---
+type: question
+title: تمرین پیش‌نیاز و تفکر برنامه‌نویسی
+description: "پنج پرسش از تجزیه، جهش‌پذیری، ارجاع و ساختار ماژول با پاسخ تشریحی."
+section: prerequisites
+difficulty: beginner
+order: 6
+estimatedMinutes: 10
+points: 5
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, پیش‌نیاز]
+---
+
+<Quiz
+  id="quiz-practice-prerequisites-1"
+  title="تمرین — پیش‌نیاز"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'خروجی این کد چیست؟ a = [1]; b = a; b.append(2); print(a)',
+      options: [
+        { id: 'a', text: '[1]' },
+        { id: 'b', text: '[1, 2]' },
+        { id: 'c', text: 'خطا' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'b و a به یک شیء اشاره می‌کنند و لیست جهش‌پذیر است؛ append از هر دو دیده می‌شود.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'کدام تابع «خالص» است؟',
+      options: [
+        { id: 'a', text: 'تابعی که لیست ورودی را مرتب می‌کند و همان را برمی‌گرداند' },
+        { id: 'b', text: 'تابعی که از روی ورودی، لیستِ تازهٔ مرتب‌شده برمی‌گرداند' },
+        { id: 'c', text: 'تابعی که نتیجه را در متغیر سراسری می‌نویسد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'خالص یعنی خروجی فقط از ورودی و بدون اثر جانبی؛ گزینهٔ الف ورودی را جهش می‌دهد و گزینهٔ ج به حالت سراسری دست می‌زند.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'بلوک if __name__ == "__main__" موقع import شدن فایل اجرا می‌شود.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'نگهبان دقیقاً برای همین است: موقع import اجرا نشود و فقط اجرای مستقیم آن را فعال کند.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'کدام نشانهٔ نیاز به شکستن یک تابع است؟',
+      options: [
+        { id: 'a', text: 'تابع فقط سه خط است' },
+        { id: 'b', text: 'توصیف کار تابع به «و» نیاز دارد' },
+        { id: 'c', text: 'تابع دو آرگومان دارد' },
+      ],
+      correctAnswer: 'b',
+      explanation: '«و» یعنی دو مسئولیت؛ طول و تعداد آرگومان به‌خودی‌خود ملاک نیستند.'
+    },
+    {
+      id: 'q5',
+      type: 'numeric',
+      text: 'x = (1, 2); y = x; y = y + (3,); مقدار len(x) چقدر است؟ (فقط عدد)',
+      numericAnswer: 2,
+      tolerance: 0,
+      explanation: 'تاپل جهش‌ناپذیر است؛ y + (3,) شیء تازه می‌سازد و x همان (1, 2) با طول ۲ می‌ماند.'
+    },
+  ]}
+/>

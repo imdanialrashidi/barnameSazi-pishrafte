@@ -1,0 +1,128 @@
+---
+type: lesson
+title: بازتاب و مباحث تکمیلی
+description: "درون‌نگری با type و inspect، اعلان‌ها به‌مثابه فراداده، تزئین‌کننده‌ها، بستارها و enum."
+section: reflection-advanced
+difficulty: advanced
+order: 1
+estimatedMinutes: 25
+objective: بتوانی در زمان اجرا ساختار شیء را کاوش کنی و با تزئین‌کننده رفتار را تمیز توسعه دهی.
+tags: [بازتاب, decorator, بستار, enum]
+prerequisites: [concurrency-networking]
+concepts: [introspection-inspect, decorators-closures, enum-types]
+---
+
+بازتاب (reflection) یعنی «برنامه‌ای که خودش را می‌خواند»: در زمان اجرا بپرسی این شیء چیست، چه ویژگی‌هایی دارد و چه متدهایی می‌فهمد. در پایتون این کار روزمره است، نه جادوی پیشرفته.
+
+## جعبه‌ابزار درون‌نگری
+
+```python
+class Book:
+    """کتاب سادهٔ کتابخانه."""
+    def __init__(self, title):
+        self.title = title
+
+    def describe(self):
+        return f"کتاب: {self.title}"
+
+b = Book("شازده کوچولو")
+print(type(b))            # <class 'Book'>
+print(isinstance(b, Book))  # True
+print(hasattr(b, "title"))  # True
+print(getattr(b, "title"))  # شازده کوچولو
+print([m for m in dir(b) if not m.startswith("_")])
+```
+
+برای کاوش عمیق‌تر ماژول `inspect` است: `inspect.signature` امضای تابع را می‌دهد و `inspect.getsource` (وقتی سورس در دسترس باشد) کدش را. اعلان‌های نوع هم با `__annotations__` در زمان اجرا خواندنی‌اند — یعنی نوع‌ها فقط برای mypy نیستند، فرادادهٔ اجرایی‌اند.
+
+## بستار: تابعی که محیطش را یادش می‌ماند
+
+```python
+def make_counter():
+    count = 0
+    def inc():
+        nonlocal count
+        count += 1
+        return count
+    return inc
+
+c = make_counter()
+print(c())  # 1
+print(c())  # 2 — count بین فراخوانی‌ها زنده ماند
+```
+
+بستار همان کاری را می‌کند که در جاوا «کلاس داخلی ناشناس» می‌کرد، ولی با یک تابع ساده. هر جا وسوسه شدی کلاسِ تک‌متده بسازی، اول بپرس: «یک بستار کافی نیست؟»
+
+## تزئین‌کننده: توسعهٔ رفتار بدون دست‌بردن در تابع
+
+```python
+import functools, time
+
+def timed(func):
+    @functools.wraps(func)  # نام و مستند تابع اصلی حفظ شود
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} در {time.perf_counter()-start:.4f} ثانیه")
+        return result
+    return wrapper
+
+@timed
+def slow_search(n):
+    return sum(range(n))
+```
+
+<Callout type="warning" title="دام wraps">
+  بدون `functools.wraps` نام و مستند تابع گم می‌شود و ابزارهایی مثل تست و مستندساز گیج می‌شوند. تزئین‌کنندهٔ بدون wraps، تزئین‌کنندهٔ ناقص است.
+</Callout>
+
+## enum: انتخاب‌های نام‌دار
+
+```python
+from enum import Enum, auto
+
+class OrderStatus(Enum):
+    PENDING = auto()
+    PAID = auto()
+    SHIPPED = auto()
+    CANCELLED = auto()
+
+def advance(status):
+    if status is OrderStatus.PAID:
+        return OrderStatus.SHIPPED
+    return status
+```
+
+رشته‌های پراکنده («paid»، «Paid»، «PAID») منبع باگ‌اند؛ enum انتخاب‌ها را یکی و قابل بررسی می‌کند.
+
+<Prerequisite ids={["functions-responsibility", "typing-generics"]} />
+
+<Quiz
+  id="quiz-reflection-metaprogramming-1"
+  title="سنجش فهم — بازتاب"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'تفاوت getattr با دسترسی مستقیم ویژگی چیست؟',
+      options: [
+        { id: 'a', text: 'getattr اجازه می‌دهد نام ویژگی در زمان اجرا (رشته) مشخص شود' },
+        { id: 'b', text: 'هیچ تفاوتی ندارند' },
+        { id: 'c', text: 'getattr فقط برای متدها کار می‌کند' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'وقتی نام ویژگی را از قبل نمی‌دانی (مثلاً از پیکربندی می‌آید)، getattr/hasattr ابزار پویایی‌اند.'
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      text: 'تزئین‌کننده بدون functools.wraps از نظر رفتاری کامل است و فقط ظاهر فرق می‌کند.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'گم‌شدن __name__ و __doc__ ابزارهای تست، لاگ و مستندسازی را می‌شکند؛ wraps بخشی از قرارداد است.'
+    },
+  ]}
+/>

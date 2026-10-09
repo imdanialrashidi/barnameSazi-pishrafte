@@ -1,0 +1,59 @@
+---
+type: example
+title: رجیستری دستور با دکوراتور
+description: "الگوی پلاگین با بازتاب: دکوراتور register دستورها را جمع می‌کند و inspect امضایشان را نشان می‌دهد."
+section: reflection-advanced
+difficulty: advanced
+order: 5
+estimatedMinutes: 12
+problem: "سیستمی بساز که هر تابعِ دارای دکوراتور register خودکار دستورِ برنامه شود و راهنما از امضاها ساخته شود."
+tags: [decorator, بازتاب]
+---
+
+<WorkedExample
+  title="رجیستری دستور"
+  problem="دو دستور greet و add ثبت کن، فهرستشان را چاپ کن و add را با ورودی رشته‌ای صدا بزن."
+  difficulty="advanced"
+  steps={[
+    { title: 'گام ۱ — جدول', content: 'دیکشنری COMMANDS: نام → تابع. دکوراتور فقط ثبت می‌کند، رفتار را عوض نمی‌کند.' },
+    { title: 'گام ۲ — حفظ هویت', content: 'functools.wraps تا نام و مستند تابع‌ها سالم بماند.' },
+    { title: 'گام ۳ — راهنمای خودکار', content: 'inspect.signature امضای هر دستور را می‌خواند؛ مستندِ همیشه‌به‌روز.' },
+    { title: 'گام ۴ — اجرا', content: 'dispatch با پیامِ روشن برای دستورِ ناشناخته.' },
+  ]}
+/>
+
+```python
+import functools, inspect
+
+COMMANDS = {}
+
+def register(func):
+    COMMANDS[func.__name__] = func
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+@register
+def greet(name):
+    """سلام کردن به یک نفر."""
+    return f"سلام {name}!"
+
+@register
+def add(a, b):
+    """جمع دو عدد."""
+    return float(a) + float(b)
+
+def help_text():
+    lines = []
+    for name, func in COMMANDS.items():
+        lines.append(f"{name}{inspect.signature(func)}: {func.__doc__}")
+    return "\n".join(lines)
+
+print(help_text())
+print(COMMANDS["add"]("2", "3"))  # 5.0
+```
+
+<Callout type="tip" title="کِی رجیستری؟">
+  وقتی دستورها را «دیگران» اضافه می‌کنند (پلاگین، CLI با زیر‌دستورهای متعدد). برای سه دستورِ ثابتِ خودت، همان if ساده خواناتر است.
+</Callout>

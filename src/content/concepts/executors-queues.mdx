@@ -1,0 +1,32 @@
+---
+type: concept
+title: اجراکننده‌ها و صف‌ها
+short: "به‌جای مدیریت دستی ریسه: صفِ امن برای توزیع کار و Executor برای اجرا و جواب‌گرفتن."
+description: "queue.Queue، تولیدکننده/مصرف‌کننده و ThreadPoolExecutor با مثال دانلود موازی."
+section: concurrency-network
+difficulty: advanced
+order: 3
+estimatedMinutes: 9
+tags: [صف, Executor, ریسه]
+prerequisites: [threads-locks]
+---
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+
+def fetch(url):
+    """شبیه‌سازی دانلود: در دنیای واقعی این‌جا درخواست شبکه است."""
+    return url, len(url) * 100  # بایتِ فرضیِ دریافتی
+
+urls = ["https://a.ir/1", "https://a.ir/2", "https://a.ir/3"]
+with ThreadPoolExecutor(max_workers=4) as pool:
+    sizes = list(pool.map(fetch, urls))
+print(sizes)
+```
+
+`Executor` چرخهٔ ساخت/شروع/join ریسه را پنهان می‌کند و استثنای هر کار را مرتب به صاحبش برمی‌گرداند. قانون انتخاب ابزار: I/O-bound (شبکه، فایل، انتظار) → ریسه/Executor؛ CPU-bound (محاسبهٔ سنگین) → فرایند (`ProcessPoolExecutor`) چون GIL ریسه‌ها را سریال می‌کند؛ مرتب‌سازیِ سادهٔ چند کار → همان حلقهٔ خطی، بدون هیچ‌کدام.
+
+<Misconception
+  wrong="هر برنامه‌ای با ریسهٔ بیشتر سریع‌تر می‌شود."
+  correct="ریسه برای انتظار عالی و برای محاسبهٔ CPUبِر در پایتون بی‌اثر (حتی با سربارِ بیشتر) است. اول پروفایل کن: برنامه‌ات منتظر است یا حساب می‌کند؟"
+/>

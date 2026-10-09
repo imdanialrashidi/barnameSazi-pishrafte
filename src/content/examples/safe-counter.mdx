@@ -1,0 +1,45 @@
+---
+type: example
+title: شمارندهٔ امن در چهار ریسه
+description: "اثبات مسابقهٔ داده‌ای و درمان با قفل: از نتیجهٔ تصادفی تا ۴۰۰۰۰ قطعی."
+section: concurrency-network
+difficulty: advanced
+order: 5
+estimatedMinutes: 12
+problem: "چهار ریسه هر کدام ۱۰۰۰۰ بار شمارنده را زیاد می‌کنند؛ بدون قفل چه می‌شود و با قفل چه؟"
+tags: [ریسه, قفل]
+---
+
+<WorkedExample
+  title="شمارندهٔ هم‌روند"
+  problem="چرا بدون قفل نتیجه کمتر از ۴۰۰۰۰ و هر بار متفاوت است؟"
+  difficulty="advanced"
+  steps={[
+    { title: 'گام ۱ — نسخهٔ ناامن', content: 'counter += 1 بدون قفل: سه قدمِ خواندن-جمع-نوشتن که وسطش ریسه عوض می‌شود.' },
+    { title: 'گام ۲ — مشاهده', content: 'چند بار اجرا کن: نتایج متفاوت و کمتر از ۴۰۰۰۰ — مسابقهٔ داده‌ایِ واقعی.' },
+    { title: 'گام ۳ — درمان', content: 'همان سه قدم داخل with lock: ناحیهٔ بحرانی یکی‌یکی.' },
+    { title: 'گام ۴ — نتیجه', content: 'همیشه دقیقاً ۴۰۰۰۰. قفل کندتر ولی درست است.' },
+  ]}
+/>
+
+```python
+import threading
+
+counter = 0
+lock = threading.Lock()
+
+def worker(n):
+    global counter
+    for _ in range(n):
+        with lock:
+            counter += 1
+
+threads = [threading.Thread(target=worker, args=(10_000,)) for _ in range(4)]
+for t in threads: t.start()
+for t in threads: t.join()
+print(counter)  # 40000
+```
+
+<Callout type="warning" title="درس بزرگ‌تر">
+  این مثال کوچک، الگوی همهٔ باگ‌های هم‌روندی است: حالتِ مشترکِ بدونِ محافظ. راه‌حلِ ریشه‌ای همیشه «محافظ» نیست؛ خیلی وقت‌ها «حذفِ حالتِ مشترک» (صف و پیام) تمیزتر است.
+</Callout>

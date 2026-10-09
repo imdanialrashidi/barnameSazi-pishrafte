@@ -1,0 +1,54 @@
+---
+type: question
+title: تمرین رابط گرافیکی
+description: "سه پرسش از حلقهٔ رویداد، callback سنگین و جدایی منطق از نما."
+section: gui-events
+difficulty: beginner
+order: 4
+estimatedMinutes: 8
+points: 3
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, GUI]
+---
+
+<Quiz
+  id="quiz-practice-gui-1"
+  title="تمرین — رابط گرافیکی"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'کاربر دکمه را می‌زند و رابط ده ثانیه قفل می‌شود. محتمل‌ترین علت؟',
+      options: [
+        { id: 'a', text: 'callback سنگین که حلقهٔ رویداد را نگه داشته' },
+        { id: 'b', text: 'رنگ دکمه' },
+        { id: 'c', text: 'کم‌بودن حافظهٔ سیستم' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'حلقهٔ رویداد تک‌نخی است؛ کار سنگین باید به ریسهٔ جدا برود.'
+    },
+    {
+      id: 'q2',
+      type: 'true-false',
+      text: 'منطق برنامه (مثل جمع سبد) باید بدون وابستگی به ویجت نوشته و تست شود.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'true',
+      explanation: 'جدایی منطق از نما یعنی منطق خالص و تست‌پذیر؛ GUI فقط ورودی و نمایش است.'
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      text: 'حلقهٔ رویداد چه می‌کند؟',
+      options: [
+        { id: 'a', text: 'رویدادها را از صف برمی‌دارد و callback متناظر را صدا می‌زند' },
+        { id: 'b', text: 'حافظه را آزاد می‌کند' },
+        { id: 'c', text: 'کد را کامپایل می‌کند' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'قلبِ هر GUI همین چرخه است: خواب، رویداد، dispatch، تکرار.'
+    },
+  ]}
+/>

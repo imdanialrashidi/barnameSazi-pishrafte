@@ -1,0 +1,57 @@
+---
+type: example
+title: شمارندهٔ کلیک با منطق جدا
+description: "همان شمارندهٔ معروف، ولی درست: منطق خالص و تست‌پذیر + لایهٔ نازک GUI."
+section: gui-events
+difficulty: beginner
+order: 3
+estimatedMinutes: 10
+problem: "دکمه‌ای که با هر کلیک شمارنده را یکی زیاد می‌کند؛ منطق را طوری بنویس که بدون GUI هم تست شود."
+tags: [GUI, جدایی-منطق]
+---
+
+<WorkedExample
+  title="شمارنده"
+  problem="سه کلیک → نمایش «۳». کدام بخش را unittest می‌کند و کدام را چشم؟"
+  difficulty="beginner"
+  steps={[
+    { title: 'گام ۱ — منطق خالص', content: 'کلاس Counter که هیچ‌چیز از tkinter نمی‌داند؛ این را با unittest می‌سازی.' },
+    { title: 'گام ۲ — تست منطق', content: 'سه بار increment و خواندن value — بدون هیچ پنجره‌ای.' },
+    { title: 'گام ۳ — لایهٔ نما', content: 'callback فقط increment صدا می‌زند و برچسب را تازه می‌کند.' },
+    { title: 'گام ۴ — قانون', content: 'اگر فردا نما به وب عوض شد، Counter دست نمی‌خورد.' },
+  ]}
+/>
+
+```python
+# logic.py
+class Counter:
+    def __init__(self):
+        self.value = 0
+    def increment(self):
+        self.value += 1
+        return self.value
+
+# test_logic.py
+import unittest
+class TestCounter(unittest.TestCase):
+    def test_three_clicks(self):
+        c = Counter()
+        for _ in range(3):
+            c.increment()
+        self.assertEqual(c.value, 3)
+
+# gui_app.py (اجرا در محیط گرافیکی)
+import tkinter as tk
+counter = Counter()
+root = tk.Tk()
+label = tk.Label(root, text="۰")
+label.pack()
+def on_click():
+    label.config(text=str(counter.increment()))
+tk.Button(root, text="بشمار", command=on_click).pack()
+root.mainloop()
+```
+
+<Callout type="tip" title="تستِ مرزی">
+  از خودت بپرس: «این خط را با unittest می‌شود تست کرد؟» اگر جواب نه است، باید یا در لایهٔ نماباشد (کم!) یا به منطق برگردد.
+</Callout>

@@ -1,0 +1,49 @@
+---
+type: example
+title: رقابت مرتب‌سازی‌ها
+description: "مقایسهٔ تجربی حبابی و sorted: زمان‌سنجی واقعی و پیوند نتیجه به ردهٔ پیچیدگی."
+section: data-structures
+difficulty: intermediate
+order: 8
+estimatedMinutes: 12
+problem: "روی ۲۰۰۰ عدد تصادفی، مرتب‌سازی حبابی را با sorted مقایسه کن و نتیجه را با O توضیح بده."
+formula: common-complexities
+tags: [مرتب‌سازی, پیچیدگی]
+---
+
+<WorkedExample
+  title="رقابت مرتب‌سازی"
+  problem="چرا sorted با اختلافِ زیاد می‌برد و این اختلاف با بزرگ‌شدن ورودی چه می‌شود؟"
+  difficulty="intermediate"
+  steps={[
+    { title: 'گام ۱ — حبابی', content: 'حلقهٔ تودرتو با خروجِ زودهنگام اگر تعویضی نبود؛ بدترین O(n²).' },
+    { title: 'گام ۲ — زمان‌سنجی', content: 'هر دو را روی همان داده با perf_counter بسنج.' },
+    { title: 'گام ۳ — خواندن نتیجه', content: 'اختلافِ صدها برابری عجیب نیست: n² در برابر n log n.' },
+    { title: 'گام ۴ — درس', content: 'برای دادهٔ واقعی همیشه sorted؛ حبابی فقط ابزارِ فهمِ هزینهٔ درجه‌دوم است.' },
+  ]}
+/>
+
+```python
+import random, time
+
+def bubble(data):
+    a = list(data)
+    for i in range(len(a)):
+        swapped = False
+        for j in range(len(a) - 1 - i):
+            if a[j] > a[j + 1]:
+                a[j], a[j + 1] = a[j + 1], a[j]
+                swapped = True
+        if not swapped:
+            break
+    return a
+
+data = [random.randint(0, 10_000) for _ in range(2000)]
+t0 = time.perf_counter(); bubble(data); t1 = time.perf_counter()
+t2 = time.perf_counter(); sorted(data); t3 = time.perf_counter()
+print(f"حبابی: {t1-t0:.3f}s — آماده: {t3-t2:.5f}s")
+```
+
+<Callout type="tip" title="پیوند با فرمول">
+  نتیجه را با <a href="/formulas/common-complexities">رده‌های رایج پیچیدگی</a> بخوان: اختلافِ n² و n log n در n=۲۰۰۰ یعنی حدود دویست برابر — دقیقاً همان چیزی که زمان‌سنج نشان می‌دهد.
+</Callout>

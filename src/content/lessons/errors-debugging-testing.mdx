@@ -1,0 +1,135 @@
+---
+type: lesson
+title: خطا، اشکال‌زدایی و آزمون
+description: "استثناها و جریان انتشار، زمینه‌بان‌ها، روش اشکال‌زدایی، تست واحد و دابل‌های تست."
+section: errors-testing
+difficulty: intermediate
+order: 1
+estimatedMinutes: 30
+objective: بتوانی استثنای معنادار تعریف و منتشر کنی، با زمینه‌بان منبع را امن کنی و تست واحد بنویسی.
+tags: [استثنا, اشکال‌زدایی, unittest, pytest]
+prerequisites: [modules-packages-typing]
+concepts: [exceptions-flow, context-managers, unit-testing, mocking-doubles]
+---
+
+برنامهٔ حرفه‌ای با برنامهٔ تمرینی در همین‌جا فرق می‌کند: وقتی چیزی اشتباه پیش می‌رود، برنامهٔ خوب «تمیز و قابل فهم» می‌شکند، نه با Traceback بی‌ربط و حالت خراب.
+
+## خطا در برابر استثنا
+
+خطای نحوی (SyntaxError) را مفسر قبل از اجرا می‌گیرد؛ استثنا (Exception) در زمان اجراست و می‌شود گرفتش. فلسفهٔ پایتون: «درخواست بخشش راحت‌تر از اجازه‌گرفتن است» (EAFP) — امتحان کن و استثنا را بگیر، به‌جای صد تا شرط احتیاطی.
+
+```python
+class InsufficientFundsError(ValueError):
+    """موجودی برای برداشت کافی نیست."""
+
+def withdraw(balance, amount):
+    if amount <= 0:
+        raise ValueError("مبلغ باید مثبت باشد.")
+    if amount > balance:
+        raise InsufficientFundsError(f"موجودی {balance} برای برداشت {amount} کافی نیست.")
+    return balance - amount
+
+try:
+    left = withdraw(100, 150)
+except InsufficientFundsError as e:
+    print("خطای دامنه‌ای:", e)
+except ValueError as e:
+    print("ورودی نامعتبر:", e)
+else:
+    print("موجودی باقی‌مانده:", left)
+finally:
+    print("ثبت در گزارش انجام شد.")
+```
+
+ترتیب `except` از خاص به عام است؛ وارونه بنویسی، شاخهٔ خاص هیچ‌وقت نمی‌رسد. `else` فقط وقتی اجرا می‌شود که استثنایی رخ نداده باشد — جای تمیزِ «مسیر موفقیت».
+
+## انتشار و مرز ترجمه
+
+استثنا تا جایی بالا می‌رود که گرفته شود. قانون مرز: در لایهٔ پایین استثنای فنی، در مرز ماژول به استثنای دامنه‌ایِ قابل‌فهم برای کاربرِ آن لایه ترجمه‌اش کن. هرگز استثنا را قورت نده (`except: pass`)؛ یا مدیریتش کن یا بگذار بالا برود.
+
+## زمینه‌بان: منبع همیشه آزاد می‌شود
+
+```python
+from contextlib import contextmanager
+
+@contextmanager
+def managed_resource(name):
+    print(f"گرفتن {name}")
+    try:
+        yield name
+    finally:
+        print(f"آزادکردن {name}")
+
+with managed_resource("قفل") as r:
+    print("کار با", r)
+# حتی اگر وسط کار استثنا بیاید، آزادسازی در finally اجرا می‌شود
+```
+
+## روش اشکال‌زدایی
+
+۱. بازتولید پایدار (کوچک‌ترین ورودی که خرابی را نشان می‌دهد). ۲. خواندن Traceback از پایین به بالا (آخرین خط نوع خطاست، بالای آن محل). ۳. فرضیهٔ واحد و آزمایش واحد. ۴. چاپ هدفمند یا `breakpoint()`، نه چاپ تصادفی در کل کد.
+
+## تست واحد
+
+```python
+import unittest
+from bank import withdraw, InsufficientFundsError
+
+class TestWithdraw(unittest.TestCase):
+    def test_normal(self):
+        self.assertEqual(withdraw(100, 40), 60)
+
+    def test_overdraft_raises(self):
+        with self.assertRaises(InsufficientFundsError):
+            withdraw(100, 150)
+
+    def test_negative_rejected(self):
+        with self.assertRaises(ValueError):
+            withdraw(100, -10)
+```
+
+`unittest` استاندارد و بدون وابستگی است؛ `pytest` نگارش روان‌تر و اکوسیستم قوی‌تری دارد (`assert` ساده، فیکسچر، پارامتری). برای دانشجو: `unittest` را بفهم، و اگر پروژه جدی شد `pytest` را انتخاب کن — منطق تست‌نویسی (مرزها، استثناها، نام‌گذاری روشن) در هر دو یکی است.
+
+<Prerequisite ids={["exceptions-flow", "context-managers", "unit-testing"]} />
+
+<Quiz
+  id="quiz-errors-debugging-testing-1"
+  title="سنجش فهم — خطا و تست"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'ترتیب درست شاخه‌های except چگونه است؟',
+      options: [
+        { id: 'a', text: 'از استثنای خاص به عام' },
+        { id: 'b', text: 'از استثنای عام به خاص' },
+        { id: 'c', text: 'ترتیب هیچ اثری ندارد' },
+      ],
+      correctAnswer: 'a',
+      explanation: 'شاخهٔ عام (مثل Exception) اگر اول بیاید همه‌چیز را می‌گیرد و شاخه‌های خاصِ بعدی هیچ‌وقت نمی‌رسند.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'بلوک else در try چه زمانی اجرا می‌شود؟',
+      options: [
+        { id: 'a', text: 'همیشه بعد از try' },
+        { id: 'b', text: 'فقط وقتی هیچ استثنایی رخ نداده باشد' },
+        { id: 'c', text: 'فقط وقتی استثنا رخ داده باشد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'else مسیر موفقیت است؛ اگر استثنایی رخ دهد به except می‌رویم نه else.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'قورت‌دادن استثنا با except خالی و pass کار قابل قبولی است.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'استثنای قورت‌داده‌شده باگ را پنهان می‌کند؛ یا مدیریتش کن، یا لاگ کن، یا بگذار بالا برود.'
+    },
+  ]}
+/>

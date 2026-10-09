@@ -1,0 +1,44 @@
+---
+type: example
+title: تقسیم قبض با تفکر بالا‌به‌پایین
+description: "از مسئلهٔ محاوره‌ای تا سه تابع تمیز: تجزیهٔ قدم‌ها، پیاده‌سازی و تست دستی."
+section: prerequisites
+difficulty: beginner
+order: 5
+estimatedMinutes: 10
+problem: "برنامه‌ای بنویس که مبلغ قبض، درصد انعام و تعداد نفرات را بگیرد و سهم هر نفر را با دو رقم اعشار چاپ کند."
+tags: [تجزیه, تابع]
+---
+
+<WorkedExample
+  title="تقسیم قبض"
+  problem="ورودی: مبلغ ۱۲۵۰۰۰، انعام ۱۰٪، ۳ نفر. سهم هر نفر چقدر است؟"
+  difficulty="beginner"
+  steps={[
+    { title: 'گام ۱ — قدم‌های بزرگ', content: 'خواندن ورودی، جمع با انعام، تقسیم بر نفرات، نمایش. چهار قدم، چهار تابعِ بالقوه.' },
+    { title: 'گام ۲ — تابعِ جمع', content: 'فقط حساب می‌کند، هیچ ورودی از کاربر نمی‌گیرد و چیزی چاپ نمی‌کند.', latex: "total = bill \\times (1 + tip/100)" },
+    { title: 'گام ۳ — پیاده‌سازی', content: 'کد نهایی: هر تابع یک کار. تابع share را می‌شود جداگانه تست کرد.', latex: "share = \\frac{total}{people}" },
+    { title: 'گام ۴ — بررسی', content: 'با ۱۲۵۰۰۰ و ۱۰٪ و ۳ نفر: جمع ۱۳۷۵۰۰ و سهم هر نفر ۴۵۸۳۳.۳۳ می‌شود. گردکردن نمایشی با :.2f', latex: "share = \\frac{137500}{3} \\approx 45833.33" },
+  ]}
+/>
+
+```python
+def with_tip(bill, percent):
+    return bill * (1 + percent / 100)
+
+def share(total, people):
+    if people <= 0:
+        raise ValueError("تعداد نفرات باید مثبت باشد.")
+    return total / people
+
+def main():
+    total = with_tip(125000, 10)
+    print(f"سهم هر نفر: {share(total, 3):.2f}")
+
+if __name__ == "__main__":
+    main()
+```
+
+<Callout type="tip" title="نکتهٔ طراحی">
+  `share` ورودی را اعتبارسنجی می‌کند و خالص است؛ `main` فقط ارکستراسیون. همین جدایی را در کل دوره (مخصوصاً GUI) دوباره می‌بینی.
+</Callout>

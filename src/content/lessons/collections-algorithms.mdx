@@ -1,0 +1,140 @@
+---
+type: lesson
+title: کالکشن‌ها و الگوریتم‌های پایه
+description: "انتخاب ساختار درست: لیست، دیکشنری، مجموعه، تکرارگر و مولد، جست‌وجو، مرتب‌سازی و پیچیدگی."
+section: data-structures
+difficulty: intermediate
+order: 1
+estimatedMinutes: 30
+objective: بتوانی برای هر مسئله ساختار و الگوریتم مناسب را با استدلال پیچیدگی انتخاب کنی.
+tags: [لیست, دیکشنری, پیچیدگی, مرتب‌سازی]
+prerequisites: [errors-debugging-testing]
+concepts: [iterators-generators, choosing-collections]
+formulas: [big-o-definition, common-complexities]
+---
+
+این بخش «ساختمان داده» نیست که جای درس ساختمان داده را بگیرد؛ جعبه‌ابزار انتخاب درست در برنامه‌سازی روزمره است: کدام کالکشن، کدام الگوریتم، با چه هزینه‌ای.
+
+## چهار کالکشن اصلی
+
+| ساختار | نگه می‌دارد | جست‌وجو | ترتیب |
+|---|---|---|---|
+| `list` | دنبالهٔ قابل تغییر | خطی | دارد |
+| `tuple` | دنبالهٔ ثابت | خطی | دارد |
+| `set` | عضوهای یکتا | میانگین ثابت | ندارد |
+| `dict` | کلید → مقدار | میانگین ثابت | ترتیب درج |
+
+```python
+names = ["سارا", "علی", "سارا"]
+unique = set(names)              # {'سارا', 'علی'} — حذف تکراری در یک خط
+scores = {"سارا": 19, "علی": 17}
+print(scores.get("رضا", "ثبت نشده"))  # دسترسی امن با پیش‌فرض
+```
+
+<Callout type="tip" title="قانون انتخاب">
+  عضویت مکرر (`in`) روی مجموعهٔ بزرگ؟ `set`. نگاشت کلید به مقدار؟ `dict`. دنبالهٔ مرتب؟ `list`. کلید ثابت ترکیبی؟ `tuple`. همین چهار جمله ۸۰٪ تصمیم‌هاست.
+</Callout>
+
+## تکرارگر در برابر تکرارپذیر
+
+تکرارپذیر (iterable) چیزی است که می‌شود رویش حلقه زد؛ تکرارگر (iterator) اشاره‌گرِ حالت‌داری است که با `next` جلو می‌رود و یک‌بارمصرف است.
+
+```python
+nums = [1, 2, 3]     # iterable
+it = iter(nums)      # iterator
+print(next(it))      # 1
+print(next(it))      # 2
+```
+
+## مولد: دنبالهٔ تنبل
+
+```python
+def evens(limit):
+    n = 0
+    while n < limit:
+        yield n
+        n += 2
+
+for e in evens(1_000_000_000):
+    if e > 10:
+        break
+    print(e)
+```
+
+مولد هیچ‌وقت کل دنباله را در حافظه نمی‌سازد؛ هر مقدار موقع نیاز تولید می‌شود. برای دادهٔ بزرگ یا جریانی، تفاوت «برنامه‌ای که اجرا می‌شود» و «برنامه‌ای که حافظه تمام می‌کند» همین `yield` است.
+
+## پیچیدگی: زبان مقایسهٔ الگوریتم‌ها
+
+<Formula
+  id="big-o-lesson"
+  latex={"T(n) = O(n^2)"}
+  caption="رشد درجه‌دوم: با دوبرابرشدن ورودی، زمان تقریباً چهار برابر می‌شود"
+/>
+
+جزئیات کامل نماد و جدول مقایسه در <a href="/formulas/big-o-definition">تعریف O بزرگ</a> و <a href="/formulas/common-complexities">پیچیدگی‌های رایج</a> آمده؛ این‌جا فقط شهود: جست‌وجوی خطی در لیست <Formula inline latex={"O(n)"} /> است، عضویت در `set` میانگین <Formula inline latex={"O(1)"} />، و جست‌وجوی دودویی روی دادهٔ مرتب <Formula inline latex={"O(\\log n)"} />.
+
+```python
+def linear_search(items, target):
+    for i, item in enumerate(items):
+        if item == target:
+            return i
+    return -1
+
+def binary_search(items, target):  # items باید مرتب باشد
+    lo, hi = 0, len(items) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if items[mid] == target:
+            return mid
+        if items[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+```
+
+<Misconception
+  wrong="مرتب‌سازی همیشه اول کار لازم است چون جست‌وجوی دودویی سریع‌تر است."
+  correct="مرتب‌سازی خودش O(n log n) هزینه دارد. اگر فقط چند جست‌وجو داری، جست‌وجوی خطی ارزان‌تر تمام می‌شود. هزینهٔ کل را حساب کن، نه هزینهٔ یک قدم را."
+/>
+
+<Prerequisite ids={["mutability-identity", "iterators-generators"]} />
+
+<Quiz
+  id="quiz-collections-algorithms-1"
+  title="سنجش فهم — کالکشن و پیچیدگی"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'بررسی عضویت مکرر در مجموعه‌ای با یک میلیون عضو؟',
+      options: [
+        { id: 'a', text: 'list چون ترتیب دارد' },
+        { id: 'b', text: 'set چون عضویت میانگین O(1) دارد' },
+        { id: 'c', text: 'tuple چون سبک‌تر است' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'عضویت در set/dict با درهم‌سازی میانگین ثابت است؛ در list خطی و برای این حجم فاجعه است.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'مزیت اصلی مولد (yield) نسبت به برگرداندن لیست چیست؟',
+      options: [
+        { id: 'a', text: 'سریع‌تر بودن همیشه' },
+        { id: 'b', text: 'تولید تنبل و مصرف حافظهٔ ثابت' },
+        { id: 'c', text: 'قابلیت ایندکس‌گرفتن' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'مولد هر مقدار را موقع نیاز می‌سازد؛ برای دنباله‌های بزرگ یا بی‌نهایت تنها راه عملی است.'
+    },
+    {
+      id: 'q3',
+      type: 'numeric',
+      text: 'در بدترین حالت، جست‌وجوی خطی در لیست ۱۰۰۰ عضوی حداکثر چند مقایسه می‌کند؟ (فقط عدد)',
+      numericAnswer: 1000,
+      tolerance: 0,
+      explanation: 'جست‌وجوی خطی در بدترین حالت همهٔ n عضو را می‌بیند: O(n).'
+    },
+  ]}
+/>

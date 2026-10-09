@@ -1,0 +1,30 @@
+---
+type: concept
+title: تست واحد
+short: "هر تست یک رفتار را ثابت می‌کند: چیدمان، اجرا و بررسی؛ مرزها و استثناها اول."
+description: "آناتومی تست خوب، unittest در برابر pytest، تست استثنا و نام‌گذاری روشن."
+section: errors-testing
+difficulty: intermediate
+order: 4
+estimatedMinutes: 9
+tags: [تست, unittest, pytest]
+prerequisites: [exceptions-flow]
+---
+
+```python
+import unittest
+
+class TestDiscount(unittest.TestCase):
+    def test_student_gets_30_percent(self):
+        self.assertAlmostEqual(discounted(100, 30), 70.0)
+
+    def test_invalid_percent_raises(self):
+        with self.assertRaises(ValueError):
+            discounted(100, 150)
+```
+
+تست خوب سه خاصیت دارد: **مستقل** (ترتیب اجرا اثر ندارد)، **تک‌رفتار** (اسمش می‌گوید چه را ثابت می‌کند) و **پایدار** (بدون خواب تصادفی و وابستگی به ساعت/شبکه). اول مرزها (صفر، خالی، منفی)، بعد مسیر اصلی، بعد استثناها. در `pytest` همان منطق با `assert` ساده و `pytest.raises` نوشته می‌شود — انتخاب ابزار سلیقه است، انضباطِ تست اجباری.
+
+<Callout type="tip" title="قانون نام">
+  اسم تست را جمله بنویس: `test_overdraft_raises_insufficient_funds`. وقتی قرمز شد، بدون بازکردن بدنه باید بفهمی چه شکسته.
+</Callout>

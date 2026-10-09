@@ -1,0 +1,32 @@
+---
+type: concept
+title: شمارش‌ها (enum)
+short: انتخاب‌های نام‌دار و محدود به‌جای رشته‌های پراکنده؛ قابل مقایسه و مستند.
+description: "enum.Enum، auto، رفتار در مقایسه و انتخاب در برابر رشته و ثابت."
+section: reflection-advanced
+difficulty: beginner
+order: 4
+estimatedMinutes: 6
+tags: [enum, طراحی]
+prerequisites: [encapsulation]
+---
+
+```python
+from enum import Enum, auto
+
+class Payment(Enum):
+    CARD = auto()
+    CASH = auto()
+    TRANSFER = auto()
+
+def pay(method: Payment):
+    if method is Payment.CASH:
+        ...
+```
+
+چرا نه رشته؟ چون `"cash"` و `"Cash"` و `"نقد"` سه‌تایند ولی هیچ‌کدام خطا نمی‌دهند — باگِ ساکت. `Enum` انتخاب‌ها را یکی، کامل (IDE و mypy کمکت می‌کنند) و قابل‌گسترش می‌کند. برای مقدارِ نمایشی (`value`) رشته یا عدد بگذار، ولی مقایسه را همیشه با خودِ عضو (`is Payment.CASH`) انجام بده.
+
+<Misconception
+  wrong="enum فقط همان ثابت‌های سراسریِ مرتب‌شده است."
+  correct="ثابتِ سراسری نه عضویت را اجبار می‌کند نه از غلطِ تایپی جلوگیری می‌کند؛ enum یک نوعِ واقعی با قرارداد است."
+/>

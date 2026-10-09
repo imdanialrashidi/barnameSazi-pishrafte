@@ -1,0 +1,78 @@
+---
+type: question
+title: تمرین خطا و آزمون
+description: "پنج پرسش از ترتیب except، else، زمینه‌بان، تست و موک با پاسخ تشریحی."
+section: errors-testing
+difficulty: intermediate
+order: 8
+estimatedMinutes: 12
+points: 5
+instructions: به هر پرسش پاسخ بده و «بررسی پاسخ‌ها» را بزن. توضیحِ هر پاسخِ غلط خودش یک درس کوتاه است.
+tags: [تمرین, استثنا, تست]
+---
+
+<Quiz
+  id="quiz-practice-errors-testing-1"
+  title="تمرین — خطا و آزمون"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      text: 'کد زیر چه چاپ می‌کند؟ try: x = 1/0 except ZeroDivisionError: x = 7 else: x = 9 finally: x = x + 1',
+      options: [
+        { id: 'a', text: '7' },
+        { id: 'b', text: '8' },
+        { id: 'c', text: '9' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'استثنا رخ می‌دهد پس except اجرا (x=7) و else رد می‌شود؛ finally همیشه اجرا می‌شود: 7+1=8.'
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      text: 'شاخهٔ except ValueError بعد از except Exception چه سرنوشتی دارد؟',
+      options: [
+        { id: 'a', text: 'عادی کار می‌کند' },
+        { id: 'b', text: 'کد مرده است چون Exception عام همه‌چیز را زودتر می‌گیرد' },
+        { id: 'c', text: 'خطای نحوی می‌دهد' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'ترتیب باید خاص‌به‌عام باشد؛ شاخهٔ عامِ اول، خاص‌های بعدی را می‌بلعد.'
+    },
+    {
+      id: 'q3',
+      type: 'true-false',
+      text: 'زمینه‌بان فقط برای فایل به کار می‌رود.',
+      options: [
+        { id: 'true', text: 'درست' },
+        { id: 'false', text: 'نادرست' },
+      ],
+      correctAnswer: 'false',
+      explanation: 'قفل، اتصال، تراکنش و زمان‌سنجی هم زمینه‌بان‌اند؛ هر «گرفتن و آزادکردن» یک زمینه‌بان بالقوه است.'
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      text: 'اسم تستِ خوب چه شکلی است؟',
+      options: [
+        { id: 'a', text: 'test_1' },
+        { id: 'b', text: 'test_overdraft_raises_and_keeps_balance' },
+        { id: 'c', text: 'test_everything' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'اسم تست باید بگوید چه رفتاری را ثابت می‌کند تا موقع قرمزشدن بدون بازکردن بدنه بفهمی چه شکسته.'
+    },
+    {
+      id: 'q5',
+      type: 'multiple-choice',
+      text: 'موک را برای چه چیزی می‌زنیم؟',
+      options: [
+        { id: 'a', text: 'برای همهٔ توابع خودمان تا تست سریع شود' },
+        { id: 'b', text: 'فقط برای مرزهای کند/خارجی/تصادفی مثل شبکه و ساعت' },
+        { id: 'c', text: 'برای حذف کامل تست‌های واقعی' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'موک بدهی است؛ فقط مرز را کنترل می‌کند و منطقِ خودت باید واقعی تست شود.'
+    },
+  ]}
+/>

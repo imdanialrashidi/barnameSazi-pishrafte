@@ -1,0 +1,30 @@
+---
+type: concept
+title: ریسه‌ها و قفل‌ها
+short: حافظهٔ مشترک یعنی مسابقهٔ داده‌ای؛ ناحیهٔ بحرانی را با قفل یکی‌یکی کن.
+description: "چرخهٔ عمر ریسه، مسابقهٔ داده‌ای، Lock و قانونِ «کمترین حالت مشترک»."
+section: concurrency-network
+difficulty: advanced
+order: 2
+estimatedMinutes: 9
+tags: [ریسه, قفل, مسابقه]
+prerequisites: [mutability-identity]
+---
+
+```python
+import threading
+
+lock = threading.Lock()
+balance = 0
+
+def deposit(amount):
+    global balance
+    with lock:  # فقط یک ریسه در هر لحظه این‌جاست
+        balance += amount
+```
+
+`balance += amount` سه قدم است (بخوان، جمع بزن، بنویس) و ریسه‌ها وسطِ قدم‌های هم می‌پرند — بدون قفل، افزایش‌ها گم می‌شوند. GIL نجاتت نمی‌دهد: GIL از درهم‌پریدنِ بایت‌کدها جلوگیری می‌کند، نه از منطقِ چندقدمیِ تو. و قفلِ بیشتر همیشه بهتر نیست: ترتیبِ وارونهٔ دو قفل در دو ریسه = بن‌بست (deadlock). راه‌حلِ ریشه‌ای: حالتِ مشترکِ کمتر (صف، پیام، دادهٔ محلیِ ریسه).
+
+<Callout type="warning" title="قانون قفل">
+  قفل را تا حد ممکن کوچک و کوتاه نگه دار و همیشه با `with` بگیر تا در هر صورت (حتی استثنا) آزاد شود. قفلِ فراموش‌شده از باگ بدتر است: برنامه ساکت می‌ایستد.
+</Callout>
