@@ -14,15 +14,15 @@ Astro is configured with `base` and `site`:
 
 ```js
 // astro.config.mjs
-const basePath = (process.env.BASE_PATH ?? '').replace(/\/$/, '');
-const site = process.env.SITE_URL ?? 'https://imdanialrashidi.github.io';
+const basePath = (process.env.BASE_PATH ?? "").replace(/\/$/, "");
+const site = process.env.SITE_URL ?? "https://imdanialrashidi.github.io";
 ```
 
-| Deployment | `BASE_PATH` | Resulting URL |
-|---|---|---|
-| Custom domain / root host | *(empty)* | `https://example.com/lessons` |
-| GitHub Pages project site | `/physics2` | `https://user.github.io/physics2/lessons` |
-| Sub-path on a shared host | `/courses/calculus` | `https://host/courses/calculus/lessons` |
+| Deployment                | `BASE_PATH`         | Resulting URL                             |
+| ------------------------- | ------------------- | ----------------------------------------- |
+| Custom domain / root host | _(empty)_           | `https://example.com/lessons`             |
+| GitHub Pages project site | `/physics2`         | `https://user.github.io/physics2/lessons` |
+| Sub-path on a shared host | `/courses/calculus` | `https://host/courses/calculus/lessons`   |
 
 Two things must carry the prefix:
 
@@ -41,17 +41,27 @@ Two things must carry the prefix:
 
 `.github/workflows/deploy.yml` builds and publishes on every push to `main`.
 
-The workflow derives the base path from the repository name, so a repository
-named `physics2` is served from `/physics2/`.
+If `public/CNAME` exists, the workflow builds for that custom domain from the
+root (`BASE_PATH=/`, `SITE_URL=https://<cname>`) and ships `dist/CNAME` so the
+Pages domain assignment survives every deploy. Without a CNAME file it falls
+back to the repository name, so a repository named `physics2` is served from
+`/physics2/`.
 
 **First-time setup:**
 
 1. Repository **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. Optionally add a `DEPLOY_BASE` repository variable:
+2. Add your domain to `public/CNAME` (one hostname, no scheme) and point DNS
+   at GitHub Pages:
+   - apex domain → `A` records `185.199.108.153`, `185.199.109.153`,
+     `185.199.110.153`, `185.199.111.153` (plus `AAAA` if needed)
+   - subdomain → `CNAME` record to `<owner>.github.io`
+3. Repository **Settings → Pages → Custom domain**: enter the domain, save,
+   then **Enforce HTTPS** once the certificate is issued.
+4. Without a CNAME file, optionally add a `DEPLOY_BASE` repository variable:
    - user/organisation site (`https://user.github.io`) → set `DEPLOY_BASE` to `/`
    - otherwise leave it unset and the repository name is used.
-3. Optionally set `SITE_URL` to the canonical origin for correct `<link rel="canonical">`
-   and sitemap URLs.
+     Optionally set `SITE_URL` for correct `<link rel="canonical">` and sitemap URLs
+     (automatic when `public/CNAME` exists).
 
 The workflow fails the build if content validation finds a problem, so a broken
 course never reaches production.
@@ -62,13 +72,13 @@ course never reaches production.
 
 **Settings → Builds & deployments**
 
-| Field | Value |
-|---|---|
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Node version | `22` (set `NODE_VERSION=22`) |
+| Field                            | Value                             |
+| -------------------------------- | --------------------------------- |
+| Build command                    | `npm run build`                   |
+| Build output directory           | `dist`                            |
+| Node version                     | `22` (set `NODE_VERSION=22`)      |
 | Environment variable `BASE_PATH` | leave **empty** for a root domain |
-| Environment variable `SITE_URL` | `https://courses.example.com` |
+| Environment variable `SITE_URL`  | `https://courses.example.com`     |
 
 For a course served under a sub-path, set `BASE_PATH` to that prefix (without a
 trailing slash).

@@ -1,12 +1,19 @@
-# Minimal static deployment for GitHub Pages (project sites under /<repo>/).
+# Static deployment for GitHub Pages.
 #
 # Node 22 is the version this template is developed and verified against.
 # Pages runs `npm ci` + `npm run build` from the repository root and publishes
-# the `dist/` artifact. BASE_PATH is derived from the repository name so the
-# same source also works on Cloudflare Pages without editing any file.
+# the `dist/` artifact.
 #
-# For a user/organisation site (https://<owner>.github.io) set the
-# `DEPLOY_BASE` repository variable to "/" in the repository settings.
+# Deployment target is resolved in this order:
+#   1. `public/CNAME` — custom domain (e.g. barnamesazi-pishrafte.danialrashidi.ir).
+#      Served from the root, so BASE_PATH is "/" and SITE_URL is the domain.
+#      Astro copies `public/CNAME` to `dist/CNAME`, which keeps the Pages
+#      custom-domain assignment alive on every deploy.
+#   2. `DEPLOY_BASE` / `SITE_URL` repository variables (manual override).
+#   3. Repository-name fallback for project sites (`/<repo>/`).
+#
+# For a user/organisation site (https://<owner>.github.io) with no CNAME file,
+# set the `DEPLOY_BASE` repository variable to "/" in the repository settings.
 
 name: deploy
 
@@ -40,20 +47,56 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Resolve deployment target
+        id: pages-meta
+        env:
+          DEPLOY_BASE: ${{ vars.DEPLOY_BASE }}
+          SITE_URL_VAR: ${{ vars.SITE_URL }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          REPO_OWNER: ${{ github.repository_owner }}
+        run: |
+          if [ -f public/CNAME ]; then
+            DOMAIN="$(head -n 1 public/CNAME | tr -d '[:space:]')"
+            if [ -z "$DOMAIN" ]; then
+              echo "public/CNAME is empty" >&2
+              exit 1
+            fi
+            echo "base=/" >> "$GITHUB_OUTPUT"
+            echo "site=https://$DOMAIN" >> "$GITHUB_OUTPUT"
+            echo "Custom domain $DOMAIN -> BASE_PATH=/ SITE_URL=https://$DOMAIN"
+          else
+            if [ -n "$DEPLOY_BASE" ]; then
+              BASE="$DEPLOY_BASE"
+            else
+              BASE="/$REPO_NAME"
+            fi
+            if [ -n "$SITE_URL_VAR" ]; then
+              SITE="$SITE_URL_VAR"
+            else
+              SITE="https://$REPO_OWNER.github.io/$REPO_NAME"
+            fi
+            echo "base=$BASE" >> "$GITHUB_OUTPUT"
+            echo "site=$SITE" >> "$GITHUB_OUTPUT"
+            echo "Project site -> BASE_PATH=$BASE SITE_URL=$SITE"
+          fi
+
       - name: Build static site
         env:
-          # A repo named "physics2" is served from /physics2/, so every asset
-          # and link Astro emits has to carry that prefix.
-          BASE_PATH: ${{ vars.DEPLOY_BASE || format('/{0}', github.event.repository.name) }}
-          SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
+          # A repo named "physics2" without a CNAME file is served from
+          # /physics2/, so every asset and link Astro emits has to carry
+          # that prefix. A custom domain is always served from the root.
+          BASE_PATH: ${{ steps.pages-meta.outputs.base }}
+          SITE_URL: ${{ steps.pages-meta.outputs.site }}
         run: npm run build
 
       - name: Validate built output
+        env:
+          BASE_PATH: ${{ steps.pages-meta.outputs.base }}
         run: node scripts/validate-content.mjs --links
 
-      - uses: actions/configure-pages@983d7736d9b0ae728b421d210d371e7cf54d78fd # v5.0.0
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
-      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v4.0.0
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: dist
 
@@ -66,4 +109,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@6f6482b73b69815bb3def249e8e2d92ab64db9be # v4.0.0
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
